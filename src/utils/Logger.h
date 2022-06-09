@@ -1,4 +1,7 @@
 #pragma once
+#include <ctime>
+#include <memory>
+#include <string>
 
 class Logger {
 private:

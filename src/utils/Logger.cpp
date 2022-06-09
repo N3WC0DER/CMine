@@ -11,7 +11,7 @@ Logger::~Logger() {
 	log << "\n\n\n";
 	log.close();
 }
-
+/** @return Logger* */
 Logger* Logger::getInstance() {
 	if (instance.get() == nullptr)
 			instance.reset(new Logger);
