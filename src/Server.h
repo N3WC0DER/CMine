@@ -1,9 +1,15 @@
 #pragma once
-#include "Logger.h"
+#include "utils/Logger.h"
+//#include "network/Socket.h"
 
 class Server {
 private:
-	std::unique_ptr<Logger> logger;
+	Logger* logger = Logger::getInstance();
+	//std::shared_ptr<Socket> socket = nullptr;
+	
 public:
 	Server();
+	~Server();
+	
+	Logger* getLogger() const;
 };

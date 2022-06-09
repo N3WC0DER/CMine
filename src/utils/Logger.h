@@ -1,17 +1,18 @@
 #pragma once
-#include <iostream>
 
 class Logger {
 private:
 	Logger();
-	Logger(const Logger&);
-	Logger operator=(Logger&);
+	Logger(const Logger&) = delete;
+	Logger operator=(Logger&) = delete;
 	
-	static tm* getCurrentTime();
+	tm* getCurrentTime();
 	
-	static std::unique_ptr<Logger> *instance = nullptr;
+	static std::unique_ptr<Logger> instance;
+	const std::string fileName = "../server.log";
 public:
-	static std::unique_ptr<Logger> getInstance();
-	static void info(std::string LOG_TAG, std::string data); //TODO: добавить вывод по выбранному потоку
-	static void info(std::string data);
+	~Logger();
+	
+	static Logger* getInstance();
+	void info(std::string data);
 };

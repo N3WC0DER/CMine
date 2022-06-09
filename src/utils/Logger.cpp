@@ -1,16 +1,21 @@
 #include <iostream>
 #include <ctime>
-#include "Logger.h"
+#include <fstream>
+#include "utils/Logger.h"
 
-Logger::Logger() {
-	
+std::unique_ptr<Logger> Logger::instance = nullptr;
+
+Logger::Logger() {}
+Logger::~Logger() {
+	std::ofstream log(fileName, std::ios_base::app);
+	log << "\n\n\n";
+	log.close();
 }
 
-std:unique_ptr<Logger> Logger::getInstance() {
-	if (instance == nullptr) {
-		instance = std::make_unique<Logger>();
-	}
-	return instance;
+Logger* Logger::getInstance() {
+	if (instance.get() == nullptr)
+			instance.reset(new Logger);
+	return instance.get();
 }
 
 tm* Logger::getCurrentTime() {
@@ -21,21 +26,14 @@ tm* Logger::getCurrentTime() {
 
 /**
  * выводит в консоль информацию, переданную из параметра
- * @param string LOG_TAG
- * @param string data
- */
-void Logger::info(std::string LOG_TAG, std::string data) {
-	tm *currentTime = Logger::getCurrentTime();
-	std::cout << "{" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << "[" << LOG_TAG << "]: " << data << std::endl;
-}
-
-/**
- * выводит в консоль информацию, переданную из параметра
  * @param string data
  */
 void Logger::info(std::string data) {
 	tm *currentTime = Logger::getCurrentTime();
+	std::ofstream log(fileName, std::ios_base::app);
 	std::cout << "{" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << "[Logger]: " << data << std::endl;
+			<< " " << data << std::endl;
+	log << "{" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
+			<< " " << data << std::endl;
+	log.close();
 }
