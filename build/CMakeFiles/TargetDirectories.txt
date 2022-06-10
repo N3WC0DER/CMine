@@ -1,0 +1,3 @@
+/storage/emulated/0/server/CMine++/build/CMakeFiles/cmine.dir
+/storage/emulated/0/server/CMine++/build/CMakeFiles/edit_cache.dir
+/storage/emulated/0/server/CMine++/build/CMakeFiles/rebuild_cache.dir
