@@ -1,0 +1,1 @@
+/data/data/com.termux/files/usr/bin/c++ -O2 -g -DNDEBUG CMakeFiles/cmine.out.dir/Server.cpp.o CMakeFiles/cmine.out.dir/cmine.cpp.o CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o CMakeFiles/cmine.out.dir/network/Socket.cpp.o CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o CMakeFiles/cmine.out.dir/utils/Logger.cpp.o -o cmine.out 

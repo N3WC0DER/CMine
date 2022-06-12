@@ -11,7 +11,7 @@ Logger::~Logger() {
 	log << "\n\n\n";
 	log.close();
 }
-/** @return Logger* */
+
 Logger* Logger::getInstance() {
 	if (instance.get() == nullptr)
 			instance.reset(new Logger);
@@ -24,10 +24,6 @@ tm* Logger::getCurrentTime() {
 	return localTime;
 }
 
-/**
- * выводит в консоль информацию, переданную из параметра
- * @param string data
- */
 void Logger::info(std::string data) {
 	tm *currentTime = Logger::getCurrentTime();
 	std::ofstream log(fileName, std::ios_base::app);

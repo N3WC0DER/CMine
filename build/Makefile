@@ -57,10 +57,10 @@ RM = /data/data/com.termux/files/usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /storage/emulated/0/server/CMine++/src
+CMAKE_SOURCE_DIR = /data/data/com.termux/files/home/CMine++/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /storage/emulated/0/server/CMine++/build
+CMAKE_BINARY_DIR = /data/data/com.termux/files/home/CMine++/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /storage/emulated/0/server/CMine++/build/CMakeFiles /storage/emulated/0/server/CMine++/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /data/data/com.termux/files/home/CMine++/build/CMakeFiles /data/data/com.termux/files/home/CMine++/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /storage/emulated/0/server/CMine++/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /data/data/com.termux/files/home/CMine++/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named cmine
+# Target rules for targets named cmine.out
 
 # Build rule for target.
-cmine: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmine
-.PHONY : cmine
+cmine.out: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmine.out
+.PHONY : cmine.out
 
 # fast build rule for target.
-cmine/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/build
-.PHONY : cmine/fast
+cmine.out/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/build
+.PHONY : cmine.out/fast
 
 Server.o: Server.cpp.o
 .PHONY : Server.o
 
 # target to build an object file
 Server.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/Server.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/Server.cpp.o
 .PHONY : Server.cpp.o
 
 Server.i: Server.cpp.i
@@ -142,7 +142,7 @@ Server.i: Server.cpp.i
 
 # target to preprocess a source file
 Server.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/Server.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/Server.cpp.i
 .PHONY : Server.cpp.i
 
 Server.s: Server.cpp.s
@@ -150,7 +150,7 @@ Server.s: Server.cpp.s
 
 # target to generate assembly for a file
 Server.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/Server.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/Server.cpp.s
 .PHONY : Server.cpp.s
 
 cmine.o: cmine.cpp.o
@@ -158,7 +158,7 @@ cmine.o: cmine.cpp.o
 
 # target to build an object file
 cmine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/cmine.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/cmine.cpp.o
 .PHONY : cmine.cpp.o
 
 cmine.i: cmine.cpp.i
@@ -166,7 +166,7 @@ cmine.i: cmine.cpp.i
 
 # target to preprocess a source file
 cmine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/cmine.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/cmine.cpp.i
 .PHONY : cmine.cpp.i
 
 cmine.s: cmine.cpp.s
@@ -174,15 +174,39 @@ cmine.s: cmine.cpp.s
 
 # target to generate assembly for a file
 cmine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/cmine.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/cmine.cpp.s
 .PHONY : cmine.cpp.s
+
+network/PacketHandler.o: network/PacketHandler.cpp.o
+.PHONY : network/PacketHandler.o
+
+# target to build an object file
+network/PacketHandler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o
+.PHONY : network/PacketHandler.cpp.o
+
+network/PacketHandler.i: network/PacketHandler.cpp.i
+.PHONY : network/PacketHandler.i
+
+# target to preprocess a source file
+network/PacketHandler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.i
+.PHONY : network/PacketHandler.cpp.i
+
+network/PacketHandler.s: network/PacketHandler.cpp.s
+.PHONY : network/PacketHandler.s
+
+# target to generate assembly for a file
+network/PacketHandler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.s
+.PHONY : network/PacketHandler.cpp.s
 
 network/Socket.o: network/Socket.cpp.o
 .PHONY : network/Socket.o
 
 # target to build an object file
 network/Socket.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/network/Socket.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/Socket.cpp.o
 .PHONY : network/Socket.cpp.o
 
 network/Socket.i: network/Socket.cpp.i
@@ -190,7 +214,7 @@ network/Socket.i: network/Socket.cpp.i
 
 # target to preprocess a source file
 network/Socket.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/network/Socket.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/Socket.cpp.i
 .PHONY : network/Socket.cpp.i
 
 network/Socket.s: network/Socket.cpp.s
@@ -198,15 +222,39 @@ network/Socket.s: network/Socket.cpp.s
 
 # target to generate assembly for a file
 network/Socket.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/network/Socket.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/Socket.cpp.s
 .PHONY : network/Socket.cpp.s
+
+network/protocol/Packet.o: network/protocol/Packet.cpp.o
+.PHONY : network/protocol/Packet.o
+
+# target to build an object file
+network/protocol/Packet.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o
+.PHONY : network/protocol/Packet.cpp.o
+
+network/protocol/Packet.i: network/protocol/Packet.cpp.i
+.PHONY : network/protocol/Packet.i
+
+# target to preprocess a source file
+network/protocol/Packet.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.i
+.PHONY : network/protocol/Packet.cpp.i
+
+network/protocol/Packet.s: network/protocol/Packet.cpp.s
+.PHONY : network/protocol/Packet.s
+
+# target to generate assembly for a file
+network/protocol/Packet.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.s
+.PHONY : network/protocol/Packet.cpp.s
 
 utils/Logger.o: utils/Logger.cpp.o
 .PHONY : utils/Logger.o
 
 # target to build an object file
 utils/Logger.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/utils/Logger.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/utils/Logger.cpp.o
 .PHONY : utils/Logger.cpp.o
 
 utils/Logger.i: utils/Logger.cpp.i
@@ -214,7 +262,7 @@ utils/Logger.i: utils/Logger.cpp.i
 
 # target to preprocess a source file
 utils/Logger.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/utils/Logger.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/utils/Logger.cpp.i
 .PHONY : utils/Logger.cpp.i
 
 utils/Logger.s: utils/Logger.cpp.s
@@ -222,7 +270,7 @@ utils/Logger.s: utils/Logger.cpp.s
 
 # target to generate assembly for a file
 utils/Logger.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.dir/build.make CMakeFiles/cmine.dir/utils/Logger.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/utils/Logger.cpp.s
 .PHONY : utils/Logger.cpp.s
 
 # Help Target
@@ -233,16 +281,22 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... cmine"
+	@echo "... cmine.out"
 	@echo "... Server.o"
 	@echo "... Server.i"
 	@echo "... Server.s"
 	@echo "... cmine.o"
 	@echo "... cmine.i"
 	@echo "... cmine.s"
+	@echo "... network/PacketHandler.o"
+	@echo "... network/PacketHandler.i"
+	@echo "... network/PacketHandler.s"
 	@echo "... network/Socket.o"
 	@echo "... network/Socket.i"
 	@echo "... network/Socket.s"
+	@echo "... network/protocol/Packet.o"
+	@echo "... network/protocol/Packet.i"
+	@echo "... network/protocol/Packet.s"
 	@echo "... utils/Logger.o"
 	@echo "... utils/Logger.i"
 	@echo "... utils/Logger.s"

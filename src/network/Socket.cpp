@@ -1,4 +1,4 @@
-#include "../Server.h"
+#include <iostream>
 
 #define PLATFORM_WINDOWS  1
 #define PLATFORM_MAC      2
@@ -21,17 +21,26 @@
 	#include <fcntl.h>
 #endif
 
+#include "../Server.h"
+#include "../utils/Mutex.h"
+
 #include "Socket.h"
 
 Socket::Socket(Server* server, uint16_t port)
 		: server(server), port(port) {}
 
-Socket::~Socket() {
-	this->close();
-}
+Socket::~Socket() {}
 
 Server* Socket::getServer() const {
 	return this->server;
+}
+
+Packet* Socket::getPacket() {
+	if (this->packets.empty())
+			return nullptr;
+	Packet* packet = this->packets.front();
+	this->packets.pop();
+	return packet;
 }
 
 void Socket::create() {
@@ -71,10 +80,13 @@ void Socket::create() {
 		this->getServer()->getLogger()->info("Failed to set non-blocking socket\nPlease restart server.");
 	}
 #endif
-	this->getServer()->getLogger()->info("Data received...");
 }
 
 void Socket::close() {
+	Mutex::recvSocket.lock();
+	this->stopped = true;
+	Mutex::recvSocket.unlock();
+	
 #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
 	//close(socket);
 #elif PLATFORM == PLATFORM_WINDOWS
@@ -84,8 +96,17 @@ void Socket::close() {
 	this->getServer()->getLogger()->info("Socket closed");
 }
 
-/*void Socket::receive() {
+void Socket::receive() {
 	while (true) {
+		Mutex::recvSocket.lock();
+		if (this->stopped){
+			Mutex::recvSocket.unlock();
+			break;
+		}
+		Mutex::recvSocket.unlock();
+		
+		char packetData[this->mtu];
+		
 #if PLATFORM == PLATFORM_WINDOWS
 		typedef int socklen_t;
 #endif
@@ -93,17 +114,14 @@ void Socket::close() {
 		sockaddr_in from;
 		socklen_t fromLength = sizeof(from);
 
-		int received_bytes = ::recvfrom(handle, (char*)packet_data, maximum_packet_size, 0, (sockaddr*)&from, &fromLength);
+		int recvBytes = ::recvfrom(this->socket, (char*)packetData, this->mtu, 0, (sockaddr*)&from, &fromLength);
 		
-		if (received_bytes >= 0) {
-			printf("%i\n", received_bytes);
-			for (int i = 0; i < sizeof(packet_data); i++) {
-				cout << packet_data[i];
-			}
-			break;
+		if (recvBytes >= 0) {
+			Packet* packet = new Packet(recvBytes, (char*)packetData);
+			this->packets.push(packet);
 		}
 
-		unsigned int from_address = ntohl(from.sin_addr.s_addr);
-		unsigned int from_port = ntohs(from.sin_port);
+		/*unsigned int from_address = ntohl(from.sin_addr.s_addr);
+		unsigned int from_port = ntohs(from.sin_port);*/
 	}
-}*/
+}
