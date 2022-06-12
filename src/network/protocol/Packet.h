@@ -3,6 +3,7 @@
 class Packet {
 private:
 	//char header[64];
+	int ID;
 	char* payload;
 	
 	int size;

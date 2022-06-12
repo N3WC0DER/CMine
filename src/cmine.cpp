@@ -4,6 +4,6 @@
 using namespace std;
 
 int main() {
-	Server server;
+	Server::init();
 	return 0;
 }

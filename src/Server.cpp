@@ -10,6 +10,8 @@
 
 #include "Server.h"
 
+std::unique_ptr<Server> Server::instance = nullptr;
+
 Server::Server() {
 	unsigned int startTime = clock();
 	this->getLogger()->info("[------------ CMine++ ------------]");
@@ -43,9 +45,17 @@ Server::Server() {
 }
 
 Server::~Server() {
-	this->socket.reset();
-	this->handler.reset();
 	this->getLogger()->info("Server stopped.");
+}
+
+void Server::init() {
+	instance.reset(new Server);
+}
+
+Server* Server::getInstance() {
+	if (instance.get() == nullptr)
+			throw std::runtime_error("Server not started!");
+	return instance.get();
 }
 
 Logger* Server::getLogger() const {

@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "Socket.h"
 #include "protocol/Packet.h"
@@ -25,14 +26,17 @@ void PacketHandler::handlePacket() {
 		
 		int size = packet->getSize();
 		char* tempPayload = packet->decodePayload();
-		std::string payload;
+		for (int i = 0; i < size; i++)
+				std::cout << static_cast<int>(tempPayload[i]) << " ";
+		
+		/*std::string payload;
 		
 		for (int i = 0; i < size; i++) {
 			payload += tempPayload[i];
 		}
 		
 		this->socket->getServer()->getLogger()->info("Packet size: " + std::to_string(size));
-		this->socket->getServer()->getLogger()->info("Payload: " + payload);
+		this->socket->getServer()->getLogger()->info("Payload: " + payload);*/
 	}
 }
 
