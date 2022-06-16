@@ -177,30 +177,6 @@ cmine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/cmine.cpp.s
 .PHONY : cmine.cpp.s
 
-network/PacketHandler.o: network/PacketHandler.cpp.o
-.PHONY : network/PacketHandler.o
-
-# target to build an object file
-network/PacketHandler.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o
-.PHONY : network/PacketHandler.cpp.o
-
-network/PacketHandler.i: network/PacketHandler.cpp.i
-.PHONY : network/PacketHandler.i
-
-# target to preprocess a source file
-network/PacketHandler.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.i
-.PHONY : network/PacketHandler.cpp.i
-
-network/PacketHandler.s: network/PacketHandler.cpp.s
-.PHONY : network/PacketHandler.s
-
-# target to generate assembly for a file
-network/PacketHandler.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.s
-.PHONY : network/PacketHandler.cpp.s
-
 network/Socket.o: network/Socket.cpp.o
 .PHONY : network/Socket.o
 
@@ -249,6 +225,78 @@ network/protocol/Packet.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.s
 .PHONY : network/protocol/Packet.cpp.s
 
+network/protocol/PacketSerializer.o: network/protocol/PacketSerializer.cpp.o
+.PHONY : network/protocol/PacketSerializer.o
+
+# target to build an object file
+network/protocol/PacketSerializer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o
+.PHONY : network/protocol/PacketSerializer.cpp.o
+
+network/protocol/PacketSerializer.i: network/protocol/PacketSerializer.cpp.i
+.PHONY : network/protocol/PacketSerializer.i
+
+# target to preprocess a source file
+network/protocol/PacketSerializer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.i
+.PHONY : network/protocol/PacketSerializer.cpp.i
+
+network/protocol/PacketSerializer.s: network/protocol/PacketSerializer.cpp.s
+.PHONY : network/protocol/PacketSerializer.s
+
+# target to generate assembly for a file
+network/protocol/PacketSerializer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.s
+.PHONY : network/protocol/PacketSerializer.cpp.s
+
+network/utils/InternetAddress.o: network/utils/InternetAddress.cpp.o
+.PHONY : network/utils/InternetAddress.o
+
+# target to build an object file
+network/utils/InternetAddress.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o
+.PHONY : network/utils/InternetAddress.cpp.o
+
+network/utils/InternetAddress.i: network/utils/InternetAddress.cpp.i
+.PHONY : network/utils/InternetAddress.i
+
+# target to preprocess a source file
+network/utils/InternetAddress.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.i
+.PHONY : network/utils/InternetAddress.cpp.i
+
+network/utils/InternetAddress.s: network/utils/InternetAddress.cpp.s
+.PHONY : network/utils/InternetAddress.s
+
+# target to generate assembly for a file
+network/utils/InternetAddress.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.s
+.PHONY : network/utils/InternetAddress.cpp.s
+
+utils/BinaryStream.o: utils/BinaryStream.cpp.o
+.PHONY : utils/BinaryStream.o
+
+# target to build an object file
+utils/BinaryStream.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o
+.PHONY : utils/BinaryStream.cpp.o
+
+utils/BinaryStream.i: utils/BinaryStream.cpp.i
+.PHONY : utils/BinaryStream.i
+
+# target to preprocess a source file
+utils/BinaryStream.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.i
+.PHONY : utils/BinaryStream.cpp.i
+
+utils/BinaryStream.s: utils/BinaryStream.cpp.s
+.PHONY : utils/BinaryStream.s
+
+# target to generate assembly for a file
+utils/BinaryStream.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmine.out.dir/build.make CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.s
+.PHONY : utils/BinaryStream.cpp.s
+
 utils/Logger.o: utils/Logger.cpp.o
 .PHONY : utils/Logger.o
 
@@ -288,15 +336,21 @@ help:
 	@echo "... cmine.o"
 	@echo "... cmine.i"
 	@echo "... cmine.s"
-	@echo "... network/PacketHandler.o"
-	@echo "... network/PacketHandler.i"
-	@echo "... network/PacketHandler.s"
 	@echo "... network/Socket.o"
 	@echo "... network/Socket.i"
 	@echo "... network/Socket.s"
 	@echo "... network/protocol/Packet.o"
 	@echo "... network/protocol/Packet.i"
 	@echo "... network/protocol/Packet.s"
+	@echo "... network/protocol/PacketSerializer.o"
+	@echo "... network/protocol/PacketSerializer.i"
+	@echo "... network/protocol/PacketSerializer.s"
+	@echo "... network/utils/InternetAddress.o"
+	@echo "... network/utils/InternetAddress.i"
+	@echo "... network/utils/InternetAddress.s"
+	@echo "... utils/BinaryStream.o"
+	@echo "... utils/BinaryStream.i"
+	@echo "... utils/BinaryStream.s"
 	@echo "... utils/Logger.o"
 	@echo "... utils/Logger.i"
 	@echo "... utils/Logger.s"

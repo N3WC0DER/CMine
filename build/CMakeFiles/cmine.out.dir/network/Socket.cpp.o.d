@@ -1,5 +1,6 @@
 CMakeFiles/cmine.out.dir/network/Socket.cpp.o: \
   /data/data/com.termux/files/home/CMine++/src/network/Socket.cpp \
+  /data/data/com.termux/files/home/CMine++/src/network/Socket.h \
   /data/data/com.termux/files/usr/include/c++/v1/iostream \
   /data/data/com.termux/files/usr/include/c++/v1/__config \
   /data/data/com.termux/files/usr/include/features.h \
@@ -153,6 +154,10 @@ CMakeFiles/cmine.out.dir/network/Socket.cpp.o: \
   /data/data/com.termux/files/usr/include/c++/v1/__bsd_locale_fallbacks.h \
   /data/data/com.termux/files/usr/include/c++/v1/bitset \
   /data/data/com.termux/files/usr/include/c++/v1/__bit_reference \
+  /data/data/com.termux/files/usr/include/c++/v1/queue \
+  /data/data/com.termux/files/usr/include/c++/v1/deque \
+  /data/data/com.termux/files/usr/include/c++/v1/__split_buffer \
+  /data/data/com.termux/files/usr/include/c++/v1/vector \
   /data/data/com.termux/files/usr/include/sys/socket.h \
   /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/socket.h \
   /data/data/com.termux/files/usr/include/asm-generic/socket.h \
@@ -186,13 +191,24 @@ CMakeFiles/cmine.out.dir/network/Socket.cpp.o: \
   /data/data/com.termux/files/usr/include/linux/stat.h \
   /data/data/com.termux/files/usr/include/bits/fcntl.h \
   /data/data/com.termux/files/usr/include/bits/lockf.h \
+  /data/data/com.termux/files/usr/include/arpa/inet.h \
   /data/data/com.termux/files/home/CMine++/src/network/../Server.h \
+  /data/data/com.termux/files/usr/include/c++/v1/thread \
+  /data/data/com.termux/files/usr/include/unistd.h \
+  /data/data/com.termux/files/usr/include/bits/getopt.h \
+  /data/data/com.termux/files/usr/include/bits/ioctl.h \
+  /data/data/com.termux/files/usr/include/bits/sysconf.h \
+  /data/data/com.termux/files/usr/include/android/legacy_unistd_inlines.h \
+  /data/data/com.termux/files/usr/include/bits/swab.h \
   /data/data/com.termux/files/home/CMine++/src/utils/Logger.h \
-  /data/data/com.termux/files/home/CMine++/src/network/Socket.h \
-  /data/data/com.termux/files/usr/include/c++/v1/queue \
-  /data/data/com.termux/files/usr/include/c++/v1/deque \
-  /data/data/com.termux/files/usr/include/c++/v1/__split_buffer \
-  /data/data/com.termux/files/usr/include/c++/v1/vector \
-  /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.h \
-  /data/data/com.termux/files/home/CMine++/src/network/PacketHandler.h \
-  /data/data/com.termux/files/home/CMine++/src/network/../utils/Mutex.h
+  /data/data/com.termux/files/usr/include/c++/v1/fstream \
+  /data/data/com.termux/files/usr/include/c++/v1/filesystem \
+  /data/data/com.termux/files/usr/include/c++/v1/stack \
+  /data/data/com.termux/files/usr/include/c++/v1/iomanip \
+  /data/data/com.termux/files/home/CMine++/src/network/../utils/Mutex.h \
+  /data/data/com.termux/files/home/CMine++/src/network/../utils/BinaryStream.h \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.h \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/../utils/InternetAddress.h \
+  /data/data/com.termux/files/usr/include/c++/v1/sstream \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/../../utils/BinaryStream.h \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.h

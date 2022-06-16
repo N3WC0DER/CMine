@@ -1,5 +1,6 @@
 CMakeFiles/cmine.out.dir/utils/Logger.cpp.o: \
   /data/data/com.termux/files/home/CMine++/src/utils/Logger.cpp \
+  /data/data/com.termux/files/home/CMine++/src/utils/Logger.h \
   /data/data/com.termux/files/usr/include/c++/v1/iostream \
   /data/data/com.termux/files/usr/include/c++/v1/__config \
   /data/data/com.termux/files/usr/include/features.h \
@@ -158,5 +159,4 @@ CMakeFiles/cmine.out.dir/utils/Logger.cpp.o: \
   /data/data/com.termux/files/usr/include/c++/v1/stack \
   /data/data/com.termux/files/usr/include/c++/v1/deque \
   /data/data/com.termux/files/usr/include/c++/v1/__split_buffer \
-  /data/data/com.termux/files/usr/include/c++/v1/iomanip \
-  /data/data/com.termux/files/home/CMine++/src/utils/Logger.h
+  /data/data/com.termux/files/usr/include/c++/v1/iomanip

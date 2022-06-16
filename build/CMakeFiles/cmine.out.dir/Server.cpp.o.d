@@ -1,5 +1,6 @@
 CMakeFiles/cmine.out.dir/Server.cpp.o: \
   /data/data/com.termux/files/home/CMine++/src/Server.cpp \
+  /data/data/com.termux/files/home/CMine++/src/Server.h \
   /data/data/com.termux/files/usr/include/c++/v1/iostream \
   /data/data/com.termux/files/usr/include/c++/v1/__config \
   /data/data/com.termux/files/usr/include/features.h \
@@ -163,12 +164,52 @@ CMakeFiles/cmine.out.dir/Server.cpp.o: \
   /data/data/com.termux/files/usr/include/android/legacy_unistd_inlines.h \
   /data/data/com.termux/files/usr/include/bits/swab.h \
   /data/data/com.termux/files/home/CMine++/src/utils/Logger.h \
-  /data/data/com.termux/files/home/CMine++/src/network/Socket.h \
-  /data/data/com.termux/files/usr/include/c++/v1/queue \
+  /data/data/com.termux/files/usr/include/c++/v1/fstream \
+  /data/data/com.termux/files/usr/include/c++/v1/filesystem \
+  /data/data/com.termux/files/usr/include/c++/v1/stack \
   /data/data/com.termux/files/usr/include/c++/v1/deque \
   /data/data/com.termux/files/usr/include/c++/v1/__split_buffer \
+  /data/data/com.termux/files/usr/include/c++/v1/iomanip \
+  /data/data/com.termux/files/home/CMine++/src/network/Socket.h \
+  /data/data/com.termux/files/usr/include/c++/v1/queue \
   /data/data/com.termux/files/usr/include/c++/v1/vector \
+  /data/data/com.termux/files/usr/include/sys/socket.h \
+  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/socket.h \
+  /data/data/com.termux/files/usr/include/asm-generic/socket.h \
+  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/sockios.h \
+  /data/data/com.termux/files/usr/include/asm-generic/sockios.h \
+  /data/data/com.termux/files/usr/include/linux/sockios.h \
+  /data/data/com.termux/files/usr/include/linux/uio.h \
+  /data/data/com.termux/files/usr/include/bits/sa_family_t.h \
+  /data/data/com.termux/files/usr/include/netinet/in.h \
+  /data/data/com.termux/files/usr/include/endian.h \
+  /data/data/com.termux/files/usr/include/sys/endian.h \
+  /data/data/com.termux/files/usr/include/netinet/in6.h \
+  /data/data/com.termux/files/usr/include/linux/in6.h \
+  /data/data/com.termux/files/usr/include/linux/libc-compat.h \
+  /data/data/com.termux/files/usr/include/linux/socket.h \
+  /data/data/com.termux/files/usr/include/linux/in.h \
+  /data/data/com.termux/files/usr/include/bits/ip_msfilter.h \
+  /data/data/com.termux/files/usr/include/bits/in_addr.h \
+  /data/data/com.termux/files/usr/include/bits/ip_mreq_source.h \
+  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/byteorder.h \
+  /data/data/com.termux/files/usr/include/linux/byteorder/little_endian.h \
+  /data/data/com.termux/files/usr/include/linux/swab.h \
+  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/swab.h \
+  /data/data/com.termux/files/usr/include/asm-generic/swab.h \
+  /data/data/com.termux/files/usr/include/linux/ipv6.h \
+  /data/data/com.termux/files/usr/include/fcntl.h \
+  /data/data/com.termux/files/usr/include/linux/fadvise.h \
+  /data/data/com.termux/files/usr/include/linux/falloc.h \
+  /data/data/com.termux/files/usr/include/linux/fcntl.h \
+  /data/data/com.termux/files/usr/include/linux/openat2.h \
+  /data/data/com.termux/files/usr/include/linux/stat.h \
+  /data/data/com.termux/files/usr/include/arpa/inet.h \
   /data/data/com.termux/files/home/CMine++/src/network/../Server.h \
-  /data/data/com.termux/files/home/CMine++/src/network/PacketHandler.h \
-  /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.h \
-  /data/data/com.termux/files/home/CMine++/src/Server.h
+  /data/data/com.termux/files/home/CMine++/src/network/../utils/Mutex.h \
+  /data/data/com.termux/files/home/CMine++/src/network/../utils/BinaryStream.h \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.h \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/../utils/InternetAddress.h \
+  /data/data/com.termux/files/usr/include/c++/v1/sstream \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/../../utils/BinaryStream.h \
+  /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.h

@@ -4,7 +4,7 @@
 # compile CXX with /data/data/com.termux/files/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/data/data/com.termux/files/home/CMine++/src -I/data/data/com.termux/files/home/CMine++/src/utils -I/data/data/com.termux/files/home/CMine++/src/network -I/data/data/com.termux/files/home/CMine++/src/network/protocol
+CXX_INCLUDES = -I/data/data/com.termux/files/home/CMine++/src -I/data/data/com.termux/files/home/CMine++/src/utils -I/data/data/com.termux/files/home/CMine++/src/network -I/data/data/com.termux/files/home/CMine++/src/network/protocol -I/data/data/com.termux/files/home/CMine++/src/network/utils
 
 CXX_FLAGS = -O2 -g -DNDEBUG
 

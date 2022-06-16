@@ -1,7 +1,10 @@
 #pragma once
+#include <iostream>
 #include <ctime>
 #include <memory>
 #include <string>
+#include <ctime>
+#include <fstream>
 
 class Logger {
 private:

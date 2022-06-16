@@ -1,6 +1,7 @@
-CMakeFiles/cmine.out.dir/cmine.cpp.o: \
-  /data/data/com.termux/files/home/CMine++/src/cmine.cpp \
-  /data/data/com.termux/files/usr/include/c++/v1/iostream \
+CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o: \
+  /data/data/com.termux/files/home/CMine++/src/utils/BinaryStream.cpp \
+  /data/data/com.termux/files/home/CMine++/src/utils/BinaryStream.h \
+  /data/data/com.termux/files/usr/include/c++/v1/string \
   /data/data/com.termux/files/usr/include/c++/v1/__config \
   /data/data/com.termux/files/usr/include/features.h \
   /data/data/com.termux/files/usr/include/sys/cdefs.h \
@@ -9,17 +10,23 @@ CMakeFiles/cmine.out.dir/cmine.cpp.o: \
   /data/data/com.termux/files/usr/include/bits/get_device_api_level_inlines.h \
   /data/data/com.termux/files/usr/include/android/ndk-version.h \
   /data/data/com.termux/files/usr/include/pthread.h \
-  /data/data/com.termux/files/usr/include/c++/v1/ios \
-  /data/data/com.termux/files/usr/include/c++/v1/iosfwd \
-  /data/data/com.termux/files/usr/include/c++/v1/wchar.h \
-  /data/data/com.termux/files/usr/include/wchar.h \
-  /data/data/com.termux/files/usr/include/c++/v1/stdio.h \
-  /data/data/com.termux/files/usr/include/stdio.h \
-  /data/data/com.termux/files/usr/include/sys/types.h \
-  /data/data/com.termux/files/usr/include/c++/v1/stddef.h \
+  /data/data/com.termux/files/usr/include/c++/v1/string_view \
+  /data/data/com.termux/files/usr/include/c++/v1/__string \
+  /data/data/com.termux/files/usr/include/c++/v1/algorithm \
+  /data/data/com.termux/files/usr/include/c++/v1/initializer_list \
+  /data/data/com.termux/files/usr/include/c++/v1/cstddef \
+  /data/data/com.termux/files/usr/include/c++/v1/version \
   /data/data/com.termux/files/usr/lib/clang/14.0.4/include/stddef.h \
   /data/data/com.termux/files/usr/lib/clang/14.0.4/include/__stddef_max_align_t.h \
   /data/data/com.termux/files/usr/include/c++/v1/__nullptr \
+  /data/data/com.termux/files/usr/include/c++/v1/type_traits \
+  /data/data/com.termux/files/usr/include/c++/v1/cstring \
+  /data/data/com.termux/files/usr/include/c++/v1/string.h \
+  /data/data/com.termux/files/usr/include/string.h \
+  /data/data/com.termux/files/usr/include/c++/v1/stddef.h \
+  /data/data/com.termux/files/usr/include/xlocale.h \
+  /data/data/com.termux/files/usr/include/bits/strcasecmp.h \
+  /data/data/com.termux/files/usr/include/sys/types.h \
   /data/data/com.termux/files/usr/include/c++/v1/stdint.h \
   /data/data/com.termux/files/usr/lib/clang/14.0.4/include/stdint.h \
   /data/data/com.termux/files/usr/include/stdint.h \
@@ -37,12 +44,17 @@ CMakeFiles/cmine.out.dir/cmine.cpp.o: \
   /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/posix_types.h \
   /data/data/com.termux/files/usr/include/asm-generic/posix_types.h \
   /data/data/com.termux/files/usr/include/bits/pthread_types.h \
-  /data/data/com.termux/files/usr/lib/clang/14.0.4/include/stdarg.h \
-  /data/data/com.termux/files/usr/include/c++/v1/string.h \
-  /data/data/com.termux/files/usr/include/string.h \
-  /data/data/com.termux/files/usr/include/xlocale.h \
-  /data/data/com.termux/files/usr/include/bits/strcasecmp.h \
   /data/data/com.termux/files/usr/include/strings.h \
+  /data/data/com.termux/files/usr/include/c++/v1/utility \
+  /data/data/com.termux/files/usr/include/c++/v1/__tuple \
+  /data/data/com.termux/files/usr/include/c++/v1/cstdint \
+  /data/data/com.termux/files/usr/include/c++/v1/__debug \
+  /data/data/com.termux/files/usr/include/c++/v1/iosfwd \
+  /data/data/com.termux/files/usr/include/c++/v1/wchar.h \
+  /data/data/com.termux/files/usr/include/wchar.h \
+  /data/data/com.termux/files/usr/include/c++/v1/stdio.h \
+  /data/data/com.termux/files/usr/include/stdio.h \
+  /data/data/com.termux/files/usr/lib/clang/14.0.4/include/stdarg.h \
   /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/fcntl.h \
   /data/data/com.termux/files/usr/include/asm-generic/fcntl.h \
   /data/data/com.termux/files/usr/include/bits/flock64.h \
@@ -76,20 +88,6 @@ CMakeFiles/cmine.out.dir/cmine.cpp.o: \
   /data/data/com.termux/files/usr/include/android/legacy_signal_inlines.h \
   /data/data/com.termux/files/usr/include/bits/mbstate_t.h \
   /data/data/com.termux/files/usr/include/bits/wctype.h \
-  /data/data/com.termux/files/usr/include/c++/v1/__locale \
-  /data/data/com.termux/files/usr/include/c++/v1/string \
-  /data/data/com.termux/files/usr/include/c++/v1/string_view \
-  /data/data/com.termux/files/usr/include/c++/v1/__string \
-  /data/data/com.termux/files/usr/include/c++/v1/algorithm \
-  /data/data/com.termux/files/usr/include/c++/v1/initializer_list \
-  /data/data/com.termux/files/usr/include/c++/v1/cstddef \
-  /data/data/com.termux/files/usr/include/c++/v1/version \
-  /data/data/com.termux/files/usr/include/c++/v1/type_traits \
-  /data/data/com.termux/files/usr/include/c++/v1/cstring \
-  /data/data/com.termux/files/usr/include/c++/v1/utility \
-  /data/data/com.termux/files/usr/include/c++/v1/__tuple \
-  /data/data/com.termux/files/usr/include/c++/v1/cstdint \
-  /data/data/com.termux/files/usr/include/c++/v1/__debug \
   /data/data/com.termux/files/usr/include/c++/v1/memory \
   /data/data/com.termux/files/usr/include/c++/v1/typeinfo \
   /data/data/com.termux/files/usr/include/c++/v1/exception \
@@ -136,80 +134,4 @@ CMakeFiles/cmine.out.dir/cmine.cpp.o: \
   /data/data/com.termux/files/usr/include/ctype.h \
   /data/data/com.termux/files/usr/include/bits/ctype_inlines.h \
   /data/data/com.termux/files/usr/include/c++/v1/wctype.h \
-  /data/data/com.termux/files/usr/include/wctype.h \
-  /data/data/com.termux/files/usr/include/c++/v1/mutex \
-  /data/data/com.termux/files/usr/include/c++/v1/__mutex_base \
-  /data/data/com.termux/files/usr/include/c++/v1/system_error \
-  /data/data/com.termux/files/usr/include/c++/v1/__errc \
-  /data/data/com.termux/files/usr/include/c++/v1/cerrno \
-  /data/data/com.termux/files/usr/include/c++/v1/locale.h \
-  /data/data/com.termux/files/usr/include/locale.h \
-  /data/data/com.termux/files/usr/include/c++/v1/support/android/locale_bionic.h \
-  /data/data/com.termux/files/usr/include/c++/v1/streambuf \
-  /data/data/com.termux/files/usr/include/c++/v1/istream \
-  /data/data/com.termux/files/usr/include/c++/v1/ostream \
-  /data/data/com.termux/files/usr/include/c++/v1/locale \
-  /data/data/com.termux/files/usr/include/c++/v1/cstdarg \
-  /data/data/com.termux/files/usr/include/c++/v1/__bsd_locale_fallbacks.h \
-  /data/data/com.termux/files/usr/include/c++/v1/bitset \
-  /data/data/com.termux/files/usr/include/c++/v1/__bit_reference \
-  /data/data/com.termux/files/home/CMine++/src/Server.h \
-  /data/data/com.termux/files/usr/include/c++/v1/thread \
-  /data/data/com.termux/files/usr/include/unistd.h \
-  /data/data/com.termux/files/usr/include/bits/fcntl.h \
-  /data/data/com.termux/files/usr/include/bits/getopt.h \
-  /data/data/com.termux/files/usr/include/bits/ioctl.h \
-  /data/data/com.termux/files/usr/include/bits/lockf.h \
-  /data/data/com.termux/files/usr/include/bits/sysconf.h \
-  /data/data/com.termux/files/usr/include/android/legacy_unistd_inlines.h \
-  /data/data/com.termux/files/usr/include/bits/swab.h \
-  /data/data/com.termux/files/home/CMine++/src/utils/Logger.h \
-  /data/data/com.termux/files/usr/include/c++/v1/fstream \
-  /data/data/com.termux/files/usr/include/c++/v1/filesystem \
-  /data/data/com.termux/files/usr/include/c++/v1/stack \
-  /data/data/com.termux/files/usr/include/c++/v1/deque \
-  /data/data/com.termux/files/usr/include/c++/v1/__split_buffer \
-  /data/data/com.termux/files/usr/include/c++/v1/iomanip \
-  /data/data/com.termux/files/home/CMine++/src/network/Socket.h \
-  /data/data/com.termux/files/usr/include/c++/v1/queue \
-  /data/data/com.termux/files/usr/include/c++/v1/vector \
-  /data/data/com.termux/files/usr/include/sys/socket.h \
-  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/socket.h \
-  /data/data/com.termux/files/usr/include/asm-generic/socket.h \
-  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/sockios.h \
-  /data/data/com.termux/files/usr/include/asm-generic/sockios.h \
-  /data/data/com.termux/files/usr/include/linux/sockios.h \
-  /data/data/com.termux/files/usr/include/linux/uio.h \
-  /data/data/com.termux/files/usr/include/bits/sa_family_t.h \
-  /data/data/com.termux/files/usr/include/netinet/in.h \
-  /data/data/com.termux/files/usr/include/endian.h \
-  /data/data/com.termux/files/usr/include/sys/endian.h \
-  /data/data/com.termux/files/usr/include/netinet/in6.h \
-  /data/data/com.termux/files/usr/include/linux/in6.h \
-  /data/data/com.termux/files/usr/include/linux/libc-compat.h \
-  /data/data/com.termux/files/usr/include/linux/socket.h \
-  /data/data/com.termux/files/usr/include/linux/in.h \
-  /data/data/com.termux/files/usr/include/bits/ip_msfilter.h \
-  /data/data/com.termux/files/usr/include/bits/in_addr.h \
-  /data/data/com.termux/files/usr/include/bits/ip_mreq_source.h \
-  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/byteorder.h \
-  /data/data/com.termux/files/usr/include/linux/byteorder/little_endian.h \
-  /data/data/com.termux/files/usr/include/linux/swab.h \
-  /data/data/com.termux/files/usr/include/aarch64-linux-android/asm/swab.h \
-  /data/data/com.termux/files/usr/include/asm-generic/swab.h \
-  /data/data/com.termux/files/usr/include/linux/ipv6.h \
-  /data/data/com.termux/files/usr/include/fcntl.h \
-  /data/data/com.termux/files/usr/include/linux/fadvise.h \
-  /data/data/com.termux/files/usr/include/linux/falloc.h \
-  /data/data/com.termux/files/usr/include/linux/fcntl.h \
-  /data/data/com.termux/files/usr/include/linux/openat2.h \
-  /data/data/com.termux/files/usr/include/linux/stat.h \
-  /data/data/com.termux/files/usr/include/arpa/inet.h \
-  /data/data/com.termux/files/home/CMine++/src/network/../Server.h \
-  /data/data/com.termux/files/home/CMine++/src/network/../utils/Mutex.h \
-  /data/data/com.termux/files/home/CMine++/src/network/../utils/BinaryStream.h \
-  /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.h \
-  /data/data/com.termux/files/home/CMine++/src/network/protocol/../utils/InternetAddress.h \
-  /data/data/com.termux/files/usr/include/c++/v1/sstream \
-  /data/data/com.termux/files/home/CMine++/src/network/protocol/../../utils/BinaryStream.h \
-  /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.h
+  /data/data/com.termux/files/usr/include/wctype.h

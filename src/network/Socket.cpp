@@ -1,29 +1,3 @@
-#include <iostream>
-
-#define PLATFORM_WINDOWS  1
-#define PLATFORM_MAC      2
-#define PLATFORM_UNIX     3
-
-#if defined(_WIN32)
-#define PLATFORM PLATFORM_WINDOWS
-#elif defined(__APPLE__)
-#define PLATFORM PLATFORM_MAC
-#else
-#define PLATFORM PLATFORM_UNIX
-#endif
-
-#if PLATFORM == PLATFORM_WINDOWS
-	#include <winsock2.h>
-	#pragma comment(lib, "wsock32.lib")
-#elif PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <fcntl.h>
-#endif
-
-#include "../Server.h"
-#include "../utils/Mutex.h"
-
 #include "Socket.h"
 
 Socket::Socket(Server* server, uint16_t port)
@@ -36,10 +10,10 @@ Server* Socket::getServer() const {
 }
 
 Packet* Socket::getPacket() {
-	if (this->packets.empty())
+	if (this->packetQueue.empty())
 			return nullptr;
-	Packet* packet = this->packets.front();
-	this->packets.pop();
+	Packet* packet = this->packetQueue.front();
+	this->packetQueue.pop();
 	return packet;
 }
 
@@ -105,7 +79,7 @@ void Socket::receive() {
 		}
 		Mutex::recvSocket.unlock();
 		
-		char packetData[this->mtu];
+		char packetData[1024];
 		
 #if PLATFORM == PLATFORM_WINDOWS
 		typedef int socklen_t;
@@ -114,14 +88,13 @@ void Socket::receive() {
 		sockaddr_in from;
 		socklen_t fromLength = sizeof(from);
 
-		int recvBytes = ::recvfrom(this->socket, (char*)packetData, this->mtu, 0, (sockaddr*)&from, &fromLength);
+		int recvBytes = ::recvfrom(this->socket, (char*)packetData, sizeof(packetData), 0, (sockaddr*)&from, &fromLength);
 		
 		if (recvBytes >= 0) {
-			Packet* packet = new Packet(recvBytes, (char*)packetData);
-			this->packets.push(packet);
+			unsigned int from_port = ntohs(from.sin_port);
+			PacketSerializer stream(packetData, recvBytes);
+			this->getServer()->getLogger()->info(std::to_string(stream.readByte()) + " " + std::to_string(stream.readLong()));
+			this->getServer()->getLogger()->info(strcat(inet_ntoa(from.sin_addr), " ") + std::to_string(from_port));
 		}
-
-		/*unsigned int from_address = ntohl(from.sin_addr.s_addr);
-		unsigned int from_port = ntohs(from.sin_port);*/
 	}
 }

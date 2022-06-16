@@ -97,24 +97,10 @@ CMakeFiles/cmine.out.dir/cmine.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cmine.out.dir/cmine.cpp.s"
 	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/data/com.termux/files/home/CMine++/src/cmine.cpp -o CMakeFiles/cmine.out.dir/cmine.cpp.s
 
-CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o: CMakeFiles/cmine.out.dir/flags.make
-CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o: /data/data/com.termux/files/home/CMine++/src/network/PacketHandler.cpp
-CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o"
-	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o -MF CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o.d -o CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o -c /data/data/com.termux/files/home/CMine++/src/network/PacketHandler.cpp
-
-CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.i"
-	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /data/data/com.termux/files/home/CMine++/src/network/PacketHandler.cpp > CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.i
-
-CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.s"
-	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/data/com.termux/files/home/CMine++/src/network/PacketHandler.cpp -o CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.s
-
 CMakeFiles/cmine.out.dir/network/Socket.cpp.o: CMakeFiles/cmine.out.dir/flags.make
 CMakeFiles/cmine.out.dir/network/Socket.cpp.o: /data/data/com.termux/files/home/CMine++/src/network/Socket.cpp
 CMakeFiles/cmine.out.dir/network/Socket.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cmine.out.dir/network/Socket.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cmine.out.dir/network/Socket.cpp.o"
 	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/network/Socket.cpp.o -MF CMakeFiles/cmine.out.dir/network/Socket.cpp.o.d -o CMakeFiles/cmine.out.dir/network/Socket.cpp.o -c /data/data/com.termux/files/home/CMine++/src/network/Socket.cpp
 
 CMakeFiles/cmine.out.dir/network/Socket.cpp.i: cmake_force
@@ -128,7 +114,7 @@ CMakeFiles/cmine.out.dir/network/Socket.cpp.s: cmake_force
 CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o: CMakeFiles/cmine.out.dir/flags.make
 CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o: /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.cpp
 CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o"
 	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o -MF CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o.d -o CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o -c /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.cpp
 
 CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.i: cmake_force
@@ -139,10 +125,52 @@ CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.s"
 	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/data/com.termux/files/home/CMine++/src/network/protocol/Packet.cpp -o CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.s
 
+CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o: CMakeFiles/cmine.out.dir/flags.make
+CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o: /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.cpp
+CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o -MF CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o.d -o CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o -c /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.cpp
+
+CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.i"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.cpp > CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.i
+
+CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.s"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/data/com.termux/files/home/CMine++/src/network/protocol/PacketSerializer.cpp -o CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.s
+
+CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o: CMakeFiles/cmine.out.dir/flags.make
+CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o: /data/data/com.termux/files/home/CMine++/src/network/utils/InternetAddress.cpp
+CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o -MF CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o.d -o CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o -c /data/data/com.termux/files/home/CMine++/src/network/utils/InternetAddress.cpp
+
+CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.i"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /data/data/com.termux/files/home/CMine++/src/network/utils/InternetAddress.cpp > CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.i
+
+CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.s"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/data/com.termux/files/home/CMine++/src/network/utils/InternetAddress.cpp -o CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.s
+
+CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o: CMakeFiles/cmine.out.dir/flags.make
+CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o: /data/data/com.termux/files/home/CMine++/src/utils/BinaryStream.cpp
+CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o -MF CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o.d -o CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o -c /data/data/com.termux/files/home/CMine++/src/utils/BinaryStream.cpp
+
+CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.i"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /data/data/com.termux/files/home/CMine++/src/utils/BinaryStream.cpp > CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.i
+
+CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.s"
+	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/data/com.termux/files/home/CMine++/src/utils/BinaryStream.cpp -o CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.s
+
 CMakeFiles/cmine.out.dir/utils/Logger.cpp.o: CMakeFiles/cmine.out.dir/flags.make
 CMakeFiles/cmine.out.dir/utils/Logger.cpp.o: /data/data/com.termux/files/home/CMine++/src/utils/Logger.cpp
 CMakeFiles/cmine.out.dir/utils/Logger.cpp.o: CMakeFiles/cmine.out.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/cmine.out.dir/utils/Logger.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/cmine.out.dir/utils/Logger.cpp.o"
 	/data/data/com.termux/files/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cmine.out.dir/utils/Logger.cpp.o -MF CMakeFiles/cmine.out.dir/utils/Logger.cpp.o.d -o CMakeFiles/cmine.out.dir/utils/Logger.cpp.o -c /data/data/com.termux/files/home/CMine++/src/utils/Logger.cpp
 
 CMakeFiles/cmine.out.dir/utils/Logger.cpp.i: cmake_force
@@ -157,9 +185,11 @@ CMakeFiles/cmine.out.dir/utils/Logger.cpp.s: cmake_force
 cmine_out_OBJECTS = \
 "CMakeFiles/cmine.out.dir/Server.cpp.o" \
 "CMakeFiles/cmine.out.dir/cmine.cpp.o" \
-"CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o" \
 "CMakeFiles/cmine.out.dir/network/Socket.cpp.o" \
 "CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o" \
+"CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o" \
+"CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o" \
+"CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o" \
 "CMakeFiles/cmine.out.dir/utils/Logger.cpp.o"
 
 # External object files for target cmine.out
@@ -167,13 +197,15 @@ cmine_out_EXTERNAL_OBJECTS =
 
 cmine.out: CMakeFiles/cmine.out.dir/Server.cpp.o
 cmine.out: CMakeFiles/cmine.out.dir/cmine.cpp.o
-cmine.out: CMakeFiles/cmine.out.dir/network/PacketHandler.cpp.o
 cmine.out: CMakeFiles/cmine.out.dir/network/Socket.cpp.o
 cmine.out: CMakeFiles/cmine.out.dir/network/protocol/Packet.cpp.o
+cmine.out: CMakeFiles/cmine.out.dir/network/protocol/PacketSerializer.cpp.o
+cmine.out: CMakeFiles/cmine.out.dir/network/utils/InternetAddress.cpp.o
+cmine.out: CMakeFiles/cmine.out.dir/utils/BinaryStream.cpp.o
 cmine.out: CMakeFiles/cmine.out.dir/utils/Logger.cpp.o
 cmine.out: CMakeFiles/cmine.out.dir/build.make
 cmine.out: CMakeFiles/cmine.out.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable cmine.out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/data/data/com.termux/files/home/CMine++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable cmine.out"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cmine.out.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
