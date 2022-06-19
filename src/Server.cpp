@@ -1,9 +1,20 @@
 #include "Server.h"
 
 Server::Server() {
+	srand(time(0)); // Для GUID
 	unsigned int startTime = clock();
 	this->getLogger()->info("[------------ CMine++ ------------]");
 	this->getLogger()->info("Server started...");
+
+	this->serverGUID = rand();
+	this->serverGUID <<= 15;
+	this->serverGUID |= rand();
+	this->serverGUID <<= 15;
+	this->serverGUID |= rand();
+	this->serverGUID <<= 15;
+	this->serverGUID |= rand();
+	this->serverGUID <<= 3;
+	this->serverGUID |= rand() & 0b111;
 	
 	this->socket = std::make_unique<Socket>(this);
 	this->socket->create();
@@ -32,6 +43,10 @@ Server::~Server() {
 
 Logger* Server::getLogger() const {
 	return this->logger;
+}
+
+uint64_t Server::getGUID() const {
+	return this->serverGUID;
 }
 
 void Server::shutdown() {

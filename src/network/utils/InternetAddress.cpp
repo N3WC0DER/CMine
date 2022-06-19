@@ -1,6 +1,6 @@
 #include "InternetAddress.h"
 
-InternetAddress::InternetAddress(std::string addr, uint16_t port, PortVersions version)
+InternetAddress::InternetAddress(std::string addr, uint16_t port, IPVersions version)
 		: addr(addr), port(port), version(version) {}
 
 std::string InternetAddress::getAddress() const {
@@ -11,7 +11,7 @@ uint16_t InternetAddress::getPort() const {
 	return this->port;
 }
 
-PortVersions InternetAddress::getVersion() const {
+IPVersions InternetAddress::getVersion() const {
 	return this->version;
 }
 

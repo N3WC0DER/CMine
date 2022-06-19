@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <queue>
 
 #define PLATFORM_WINDOWS  1
@@ -27,8 +28,12 @@
 #include "../Server.h"
 #include "../utils/Mutex.h"
 #include "../utils/BinaryStream.h"
+#include "protocol/MessageIdentifier.h"
 #include "protocol/PacketSerializer.h"
 #include "protocol/Packet.h"
+#include "protocol/UnconnectedPong.h"
+#include "protocol/UnconnectedPing.h"
+#include "utils/InternetAddress.h"
 
 class Server; // циклическая зависимость
 
@@ -58,6 +63,8 @@ public:
 	
 	/** @return Server* */
 	Server* getServer() const;
+	/** @return Logger* */
+	Logger* getLogger() const;
 	
 	/** @return Packet* */
 	Packet* getPacket();
@@ -71,6 +78,11 @@ public:
 	 * Получение данных из сокета
 	 */
 	void receive();
+	
+	/** 
+	 * Отправка данных
+	 */
+	void send(uint8_t* buffer, int packetSize, sockaddr_in& from);
 	
 	/**
 	 * Закрытие сокета

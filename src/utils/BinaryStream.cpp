@@ -3,14 +3,28 @@
 BinaryStream::BinaryStream()
 		: size(0), position(0), endian(Endians::LENDIAN) {}
 
-BinaryStream::BinaryStream(char *str, int size, Endians endian)
-		: buffer(str), size(size), position(0), endian(endian) {}
+BinaryStream::BinaryStream(uint8_t* buffer, int size, Endians endian)
+		: buffer(buffer), size(size), position(0), endian(endian) {}
+
+uint8_t* BinaryStream::getBuffer() const {
+	return this->buffer;
+}
+
+int BinaryStream::getSize() const {
+	return this->size;
+}
+
+void BinaryStream::clear() {
+	this->buffer = nullptr;
+	this->size = 0;
+	this->position = 0;
+}
 
 uint8_t BinaryStream::readByte() {
 	if (this->position >= this->size)
 			throw std::runtime_error("Binary stream out of range!");
 	
-	return static_cast<uint8_t>(buffer[position++]);
+	return buffer[position++];
 }
 
 int64_t BinaryStream::readLong() {
@@ -44,12 +58,7 @@ int64_t BinaryStream::readLong() {
 }
 
 short BinaryStream::readShort() {
-	short value = static_cast<short>(this->readUShort());
-	
-	if (value >> 15 == 1) {
-		value = -(value ^ 0xFFFF);
-	}
-	return value;
+	return static_cast<short>(this->readUShort());
 }
 
 unsigned short BinaryStream::readUShort() {
@@ -70,13 +79,22 @@ bool BinaryStream::readBoolean() {
 }
 
 void BinaryStream::putByte(uint8_t value) {
-	char *temp = this->buffer;
-	this->size++;
-	this->buffer = new char[this->size];
+	uint8_t temp[this->size+1];
+	temp[this->size] = value;
 	
-	this->buffer = temp + value;
-	delete temp;
-	temp = nullptr;
+	if (this->buffer != nullptr) {
+		for (int i = 0; i < this->size; i++)
+				temp[i] = this->buffer[i];
+		
+		delete this->buffer;
+		this->buffer = nullptr;
+	}
+	
+	this->size++;
+	this->buffer = new uint8_t[this->size];
+	
+	for (int i = 0; i < this->size; i++)
+			this->buffer[i] = temp[i];
 }
 
 void BinaryStream::putLong(int64_t value) {

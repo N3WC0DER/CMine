@@ -1,17 +1,11 @@
 #include "Packet.h"
 
-Packet::Packet(int recvBytes, char* payload) {
-	this->size = recvBytes;
-	
-	this->payload = new char[recvBytes];
-	for (int i = 0; i < recvBytes; i++)
-			this->payload[i] = payload[i];
+void Packet::decode(PacketSerializer* out) {
+	this->decodeHeader(out);
+	this->decodePayload(out);
 }
 
-int Packet::getSize() const {
-	return this->size;
-}
-
-char* Packet::decodePayload() {
-	return this->payload;
+void Packet::encode(PacketSerializer* in) {
+	this->encodeHeader(in);
+	this->encodePayload(in);
 }

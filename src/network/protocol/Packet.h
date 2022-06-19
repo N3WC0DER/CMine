@@ -1,21 +1,21 @@
 #pragma once
 
+#include "MessageIdentifier.h"
+#include "PacketSerializer.h"
+
 class Packet {
 private:
-	//char header[64];
-	int ID;
-	char* payload;
+protected:
+	virtual void decodeHeader(PacketSerializer* out) = 0;
+	virtual void decodePayload(PacketSerializer* out) = 0;
 	
-	int size;
-	
+	virtual void encodeHeader(PacketSerializer* in) = 0;
+	virtual void encodePayload(PacketSerializer* in) = 0;
+
 public:
-	Packet(int recvBytes, char* payload);
+	static const uint8_t PID = ID::UNKNOWN;
 	
-	int getSize() const;
+	void decode(PacketSerializer* out);
 	
-	/** 
-	 * Декодирует полезную нагрузку пакета
-	 * @return char*
-	 */
-	char* decodePayload();
+	void encode(PacketSerializer* in);
 };

@@ -1,6 +1,11 @@
 #include "PacketSerializer.h"
 
-PacketSerializer::PacketSerializer(char* buffer, int recvBytes)
+#include <iostream>
+
+PacketSerializer::PacketSerializer() 
+		: BinaryStream() {}
+
+PacketSerializer::PacketSerializer(uint8_t* buffer, int recvBytes)
 		: BinaryStream(buffer, recvBytes) {}
 
 std::string PacketSerializer::readString() {
@@ -19,7 +24,7 @@ InternetAddress* PacketSerializer::readAddress() {
 	
 	if (version == 4) {
 		std::string addr = std::to_string(this->readByte()) + "." + std::to_string(this->readByte()) + "." + std::to_string(this->readByte()) + "." + std::to_string(this->readByte());
-		uint16_t port = this->readShort();
+		uint16_t port = this->readUShort();
 		return new InternetAddress(addr, port);
 	} else if (version == 6) {
 		// TODO
@@ -29,43 +34,54 @@ InternetAddress* PacketSerializer::readAddress() {
 	}
 }
 
-uint32_t PacketSerializer::readLEndian() {
-	uint32_t value = 0;
+uint8_t* PacketSerializer::readLTriad() {
+	uint8_t* value = new uint8_t[3];
 	
-	if (this->endian == Endians::BENDIAN) {
-		value |= this->readByte() << 16;
-		value |= this->readByte() << 8;
-		value |= this->readByte() << 0;
-	} else {
-		value |= this->readByte() << 0;
-		value |= this->readByte() << 8;
-		value |= this->readByte() << 16;
-	}
+	value[0] = this->readByte();
+	value[1] = this->readByte();
+	value[2] = this->readByte();
 	return value;
+}
+
+void PacketSerializer::readMagic() {
+	this->position += 16;
 }
 
 void PacketSerializer::putString(std::string value) {
 	unsigned short length = value.size();
+	this->putUShort(length);
 	
 	for (int i = 0; i < length; i++)
-			this->putByte(value[i]);
+			this->putByte(static_cast<uint8_t>(value[i]));
 }
 
 void PacketSerializer::putAddress(InternetAddress* addr) {
 	this->putByte(addr->getVersion());
+	
 	if (addr->getVersion() == 4){
-		uint8_t temp;
+		std::string temp;
+		uint8_t byte;
 		for (int i = 0; i < addr->getAddress().size(); i++) {
 			if (addr->getAddress()[i] == '.') {
-				this->putByte(temp);
-				temp = 0;
+				byte = std::stoi(temp);
+				this->putByte(byte);
+				
+				byte = 0;
+				temp.clear();
+				
 			} else {
-				temp *= 10;
-				temp += (int) addr->getAddress()[i];
-				if (i == addr->getAddress().size()-1)
-						this->putByte(temp);
+				temp += static_cast<uint8_t>(addr->getAddress()[i]);
+			
+				if (i == addr->getAddress().size()-1) {
+					byte = std::stoi(temp);
+					this->putByte(byte);
+					byte = 0;
+					temp.clear();
+				}
 			}
 		}
+		
+		this->putUShort(addr->getPort());
 	} else if (addr->getVersion() == 6) {
 		// TODO
 		throw std::runtime_error("IPv6 not supported");
@@ -74,16 +90,18 @@ void PacketSerializer::putAddress(InternetAddress* addr) {
 	}
 }
 
-void PacketSerializer::putLEndian(uint32_t value) {
-	value &= 0xFFFFFF;
+void PacketSerializer::putLTriad(uint8_t* value) {
+	value[0] &= 0xFF;
+	value[1] &= 0xFF;
+	value[2] &= 0xFF;
 	
-	if (endian == Endians::BENDIAN) {
-		this->putByte(value >> 16);
-		this->putByte(value >> 8);
-		this->putByte(value >> 0);
-	} else {
-		this->putByte(value >> 0);
-		this->putByte(value >> 8);
-		this->putByte(value >> 16);
+	this->putByte(value[0]);
+	this->putByte(value[1]);
+	this->putByte(value[2]);
+}
+
+void PacketSerializer::putMagic() {
+	for (int i = 0; i < 16; i++) {
+		this->putByte(magic[i]);
 	}
 }

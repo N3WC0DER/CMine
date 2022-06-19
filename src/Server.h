@@ -20,12 +20,18 @@ private:
 	/** @var std::thread */
 	std::thread *recvSocket;
 	
+	/** @var uint64_t */
+	uint64_t serverGUID;
+	
 public:
 	Server();
 	~Server();
 	
 	/** @return Logger* */
 	Logger* getLogger() const;
+	
+	/** @return uint64_t GUID */
+	uint64_t getGUID() const;
 	
 	/** Выключение сервера */
 	void shutdown();
