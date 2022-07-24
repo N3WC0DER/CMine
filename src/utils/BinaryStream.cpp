@@ -1,10 +1,24 @@
 #include "BinaryStream.h"
 
-BinaryStream::BinaryStream()
-		: size(0), position(0), endian(Endians::LENDIAN) {}
+#include <iostream>
 
-BinaryStream::BinaryStream(uint8_t* buffer, int size, Endians endian)
-		: buffer(buffer), size(size), position(0), endian(endian) {}
+BinaryStream::BinaryStream()
+		: size(0), position(0), endian(Endians::BENDIAN) {}
+
+BinaryStream::BinaryStream(const uint8_t* buffer, const int size, Endians endian)
+		: size(size), position(0), endian(endian) {
+	this->buffer = new uint8_t[size];
+	for (int i = 0; i < size; i++)
+			this->buffer[i] = buffer[i];
+}
+
+BinaryStream::BinaryStream(const BinaryStream& stream)
+		: BinaryStream(stream.getBuffer(), stream.getSize()) {}
+
+BinaryStream::~BinaryStream() {
+	delete buffer;
+	this->buffer = nullptr;
+}
 
 uint8_t* BinaryStream::getBuffer() const {
 	return this->buffer;
@@ -20,9 +34,29 @@ void BinaryStream::clear() {
 	this->position = 0;
 }
 
+bool BinaryStream::feof() const {
+	return this->position == this->size;
+}
+
+//----------------------------- READ -----------------------------
+
+uint8_t* BinaryStream::read(const size_t bytes) {
+	uint8_t* data = new uint8_t[bytes];
+	if (this->endian == Endians::BENDIAN) {
+		for (size_t i = 0; i < bytes; i++) {
+			data[i] = this->readByte();
+		}
+	} else {
+		for (size_t i = bytes; i > 0; i--) {
+			data[i] = this->readByte();
+		}
+	}
+	return data;
+}
+
 uint8_t BinaryStream::readByte() {
 	if (this->position >= this->size)
-			throw std::runtime_error("Binary stream out of range!");
+			throw Exception("Binary stream out of range!");
 	
 	return buffer[position++];
 }
@@ -50,19 +84,15 @@ int64_t BinaryStream::readLong() {
 		value |= static_cast<unsigned long>(this->readByte()) << 56;
 	}
 	
-	if (value >> 63 == 1) {
-		value = -(value ^ 0xFFFFFFFFFFFFFFFF);
-	}
-	
 	return value;
 }
 
-short BinaryStream::readShort() {
-	return static_cast<short>(this->readUShort());
+int16_t BinaryStream::readShort() {
+	return static_cast<int16_t>(this->readUShort());
 }
 
-unsigned short BinaryStream::readUShort() {
-	unsigned short value = 0;
+uint16_t BinaryStream::readUShort() {
+	uint16_t value = 0;
 	
 	if (this->endian == Endians::BENDIAN) {
 		value |= this->readByte() << 8;
@@ -74,11 +104,64 @@ unsigned short BinaryStream::readUShort() {
 	return value;
 }
 
+int32_t BinaryStream::readInt() {
+	return static_cast<int32_t>(readUInt());
+}
+
+uint32_t BinaryStream::readUInt() {
+	uint32_t value = 0;
+	if (this->endian == Endians::BENDIAN) {
+		value |= this->readByte() << 24;
+		value |= this->readByte() << 16;
+		value |= this->readByte() << 8;
+		value |= this->readByte() << 0;
+	} else {
+		value |= this->readByte() << 0;
+		value |= this->readByte() << 8;
+		value |= this->readByte() << 16;
+		value |= this->readByte() << 24;
+	}
+	return value;
+}
+
 bool BinaryStream::readBoolean() {
 	return this->readByte() == 1 ? true : false;
 }
 
-void BinaryStream::putByte(uint8_t value) {
+//----------------------------- PUT -----------------------------
+
+void BinaryStream::put(const uint8_t* data, const size_t bytes) {
+	uint8_t temp[size+bytes];
+	
+	// Копируем старый массив и удаляем его
+	if (this->buffer != nullptr) {
+		for (int i = 0; i < this->size; i++)
+				temp[i] = this->buffer[i];
+		
+		delete this->buffer;
+		this->buffer = nullptr;
+	}
+	
+	// Копируем данные из параметра
+	if (this->endian == Endians::BENDIAN) {
+		for (int i = this->size; i < bytes; i++) {
+			temp[i] = data[i-size];
+		}
+	} else {
+		for (int i = bytes; i > this->size; i--) {
+			temp[i] = data[i-bytes];
+		}
+	}
+	
+	// Создаем массив и копируем все элементы из временного массива
+	this->size += bytes;
+	this->buffer = new uint8_t[this->size];
+	
+	for (int i = 0; i < this->size; i++)
+			this->buffer[i] = temp[i];
+}
+
+void BinaryStream::putByte(const uint8_t value) {
 	uint8_t temp[this->size+1];
 	temp[this->size] = value;
 	
@@ -97,7 +180,7 @@ void BinaryStream::putByte(uint8_t value) {
 			this->buffer[i] = temp[i];
 }
 
-void BinaryStream::putLong(int64_t value) {
+void BinaryStream::putLong(const int64_t value) {
 	if (endian == Endians::BENDIAN) {
 		this->putByte(value >> 56);
 		this->putByte(value >> 48);
@@ -119,7 +202,11 @@ void BinaryStream::putLong(int64_t value) {
 	}
 }
 
-void BinaryStream::putShort(short value) {
+void BinaryStream::putShort(const int16_t value) {
+	this->putUShort(value);
+}
+
+void BinaryStream::putUShort(const uint16_t value) {
 	if (endian == Endians::BENDIAN) {
 		this->putByte(value >> 8);
 		this->putByte(value >> 0);
@@ -129,16 +216,24 @@ void BinaryStream::putShort(short value) {
 	}
 }
 
-void BinaryStream::putUShort(unsigned short value) {
+void BinaryStream::putInt(const int32_t value) {
+	this->putUInt(value);
+}
+
+void BinaryStream::putUInt(const uint32_t value) {
 	if (endian == Endians::BENDIAN) {
+		this->putByte(value >> 24);
+		this->putByte(value >> 16);
 		this->putByte(value >> 8);
 		this->putByte(value >> 0);
 	} else {
 		this->putByte(value >> 0);
 		this->putByte(value >> 8);
+		this->putByte(value >> 16);
+		this->putByte(value >> 24);
 	}
 }
 
-void BinaryStream::putBoolean(bool value) {
+void BinaryStream::putBoolean(const bool value) {
 	this->putByte(value == true ? 1 : 0);
 }

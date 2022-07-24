@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 
-#include "../utils/InternetAddress.h"
-#include "../../utils/BinaryStream.h"
+#include "network/utils/InternetAddress.h"
+#include "utils/BinaryStream.h"
 
 class PacketSerializer : public BinaryStream{
 private:
@@ -14,7 +14,8 @@ private:
 	
 public:
 	PacketSerializer();
-	PacketSerializer(uint8_t* buffer, int recvBytes);
+	PacketSerializer(const uint8_t* buffer, const int recvBytes);
+	PacketSerializer(const PacketSerializer& buffer);
 	
 	/** 
 	 * Вывод строки из потока.
@@ -33,7 +34,7 @@ public:
 	 * Вывод 3 little-endian байтов из потока.
 	 * @return uint8_t*
 	 */
-	uint8_t* readLTriad();
+	uint32_t readLTriad();
 	
 	/**
 	 * "Вывод" OFFLINE_MESSAGE_DATA_ID из потока.
@@ -45,20 +46,20 @@ public:
 	 * Ввод строки в поток.
 	 * @param std::string str 
 	 */
-	void putString(std::string str);
+	void putString(const std::string str);
 	
 	/** 
 	 * Ввод адреса в поток.
 	 * 1 байт для версии (4 или 6), 4 байта IP, 2 байта порт.
 	 * @param InternetAddress* addr 
 	 */
-	void putAddress(InternetAddress* addr);
+	void putAddress(const InternetAddress* addr);
 	
 	/**
 	 * Ввод 3 little-endian байтов в поток.
 	 * @param uint8_t* triad массив байтов
 	 */
-	void putLTriad(uint8_t* triad);
+	void putLTriad(const uint32_t triad);
 	
 	/** 
 	 * Ввод OFFLINE_MESSAGE_DATA_ID в поток.

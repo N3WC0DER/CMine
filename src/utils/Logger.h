@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
-#include <ctime>
-#include <memory>
 #include <string>
 #include <ctime>
 #include <fstream>
+
+#include "ServerInfo.h"
+#include "utils/LogMessage.h"
+#include "utils/Colors.h"
 
 class Logger {
 private:
@@ -12,26 +14,31 @@ private:
 	Logger(const Logger&) = delete;
 	Logger operator=(Logger&) = delete;
 	
-	/** Получение текущего времени
-	 * @return tm* структура, содержащая текущее время
-	 */
-	tm* getCurrentTime();
-	
-	/** @var unique_ptr<Logger> */
 	static std::unique_ptr<Logger> instance;
 	
-	/** Имя файла, куда сохраняются логи сервера
-	 * @var std::string
-	 */
+	inline tm* getCurrentTime();
+	
 	const std::string fileName = "../server.log";
 public:
 	~Logger();
 	
-	/** @return Logger* */
 	static Logger* getInstance();
-	/**
-	 * выводит в консоль информацию, переданную из параметра
-	 * @param string data
-	 */
-	void info(std::string data);
+
+	void info(const std::string data);
+	void info(const LogMessage& msg);
+	
+	void notice(const std::string data);
+	void notice(const LogMessage& msg);
+	
+	void warning(const std::string data);
+	void warning(const LogMessage& msg);
+	
+	void debug(const std::string data);
+	void debug(const LogMessage& msg);
+	
+	void error(const std::string data);
+	void error(const LogMessage& msg);
+	
+	void critical(const std::string data);
+	void critical(const LogMessage& msg);
 };

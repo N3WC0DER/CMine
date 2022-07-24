@@ -1,86 +1,109 @@
 #pragma once
-#include <string>
+#include "utils/Exception.h"
 
 enum class Endians {
-		BENDIAN,
-		LENDIAN
-	};
+	BENDIAN,
+	LENDIAN
+};
 
 class BinaryStream {
 protected:
-	uint8_t *buffer = nullptr;
+	uint8_t* buffer = nullptr;
 	int size;
 	int position;
-	Endians endian;
+	Endians endian = Endians::BENDIAN;
 	
 public:
 	BinaryStream();
-	BinaryStream(uint8_t* buffer, int size, Endians endian = Endians::BENDIAN);
+	BinaryStream(const uint8_t* buffer, const int size, Endians endian = Endians::BENDIAN);
+	BinaryStream(const BinaryStream& stream);
+	~BinaryStream();
 	
-	/** @return uint8_t* */
 	uint8_t* getBuffer() const;
-	/** @return int */
 	int getSize() const;
 	
 	void clear();
 	
+	bool feof() const;
+	
+	/**
+	 * Вывод данных фиксированной длины из потока
+	 */
+	uint8_t* read(const size_t bytes);
+	
 	/** 
 	 * Вывод байта из потока.
-	 * @return uint8_t
+	 * @throws Exception
 	 */
 	uint8_t readByte();
 	
 	/**
 	 * Вывод 8 подписанных байтов (signed long) из потока.
-	 * @return int64_t
 	 */
 	int64_t readLong();
 	
 	/**
 	 * Вывод 2 подписанных байтов (signed short) из потока.
-	 * @return short
 	 */
-	short readShort();
+	int16_t readShort();
 	
 	/**
 	 * Вывод 2 неподписанных байтов (unsigned short) из потока.
-	 * @return unsigned short
 	 */
-	unsigned short readUShort();
+	uint16_t readUShort();
+	
+	/**
+	 * Вывод 4 подписанных байтов (int) из потока.
+	 */
+	int32_t readInt();
+	
+	/**
+	 * Вывод 4 неподписанных байтов (unsigned int) из потока.
+	 */
+	uint32_t readUInt();
 	
 	/** 
 	 * Вывод 1 бита (bool) из потока.
-	 * @return bool
 	 */
 	bool readBoolean();
 	
+	/**
+	 * Ввод данных фиксированной длины в поток.
+	 */
+	void put(const uint8_t* data, const size_t bytes);
+	
 	/** 
 	 * Ввод байта в поток.
-	 * @param uint8_t c
 	 */
-	void putByte(uint8_t c);
+	void putByte(const uint8_t value);
 	
 	/**
 	 * Ввод 8 подписанных байтов (signed long) в поток.
-	 * @param int64_t l
 	 */
-	void putLong(int64_t l);
+	void putLong(const int64_t value);
 	
 	/**
 	 * Ввод 2 подписанных байтов (signed short) в поток.
-	 * @param short s
 	 */
-	void putShort(short s);
+	void putShort(const int16_t value);
 	
 	/**
 	 * Ввод 2 неподписанных байтов (unsigned short) в поток.
-	 * @paran unsigned short us
 	 */
-	void putUShort(unsigned short us);
+	void putUShort(const uint16_t value);
+	
+	/**
+	 * Ввод 2 подписанных байтов (int) в поток.
+	 */
+	void putInt(const int32_t value);
+	
+	/**
+	 * Ввод 2 неподписанных байтов (unsigned int) в поток.
+	 */
+	void putUInt(const uint32_t value);
 	
 	/** 
 	 * Ввод 1 бита (bool) в поток.
-	 * @param bool b
 	 */
-	void putBoolean(bool b);
+	void putBoolean(const bool value);
 };

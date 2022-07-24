@@ -1,38 +1,40 @@
 #include "Socket.h"
 
-Socket::Socket(Server* server, uint16_t port)
-		: server(server), port(port) {}
+#include <iostream>
 
-Socket::~Socket() {}
+Socket::Socket(Server* server, uint16_t port)
+		: server(server), port(port) {
+	this->startTime = time(0);
+}
+
+Socket::~Socket() {
+	this->close();
+}
 
 Server* Socket::getServer() const {
 	return this->server;
 }
 
-Logger* Socket::getLogger() const {
-	return this->logger;
+SessionManager* Socket::getSessionManager() const {
+	return this->sessionManager.get();
 }
 
-Packet* Socket::getPacket() {
-	if (this->packetQueue.empty())
-			return nullptr;
-	Packet* packet = this->packetQueue.front();
-	this->packetQueue.pop();
-	return packet;
+inline uint64_t Socket::getTime() const {
+	return this->startTime - time(0);
 }
 
 void Socket::create() {
 	this->socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (this->socket <=0) {
-		throw std::runtime_error("Socket not created!\nPlease restart server.");
+	if (this->socket <= 0) {
+		throw SocketException("Socket not created!\nPlease restart server.");
 	}
-	this->getServer()->getLogger()->info("Socket created!");
+	Logger::getInstance()->debug("Socket created!");
 	
 #if PLATFORM == PLATFORM_WINDOWS
 	WSADATA WsaData;
 	
 	if (WSAStartup(MAKEWORD(2,2), &WsaData) != NO_ERROR) {
-		throw std::runtime_error("[Windows] Error socket create\nPlease restart server.");
+		throw SocketException("[Windows] Error socket create\nPlease restart server.");
 	}
 #endif
 
@@ -42,105 +44,174 @@ void Socket::create() {
 	address.sin_port = htons((unsigned short) this->port);
 	
 	if (::bind(this->socket, (const sockaddr*) &address, sizeof(sockaddr_in)) < 0) {
-		throw std::runtime_error("Error socket bind\nPlease restart server.");
+		throw SocketException("Error socket bind\nPlease restart server.");
 	}
-	this->getServer()->getLogger()->info("Socket binded!");
+	Logger::getInstance()->debug("Socket binded!");
 	
 #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
 	int nonBlocking = 1;
 	if (fcntl(this->socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
-		throw std::runtime_error("Failed to set non-blocking socket\nPlease restart server.");
+		throw SocketException("Failed to set non-blocking socket\nPlease restart server.");
 	}
 
 #elif PLATFORM == PLATFORM_WINDOWS
 	DWORD nonBlocking = 1;
 	if (ioctlsocket(this->socket, FIONBIO, &nonBlocking) != 0) {
-		this->getServer()->getLogger()->info("Failed to set non-blocking socket\nPlease restart server.");
+		throw SocketException("Failed to set non-blocking socket\nPlease restart server.");
 	}
 #endif
+	
+	this->sessionManager = std::make_unique<SessionManager>(this));
 }
 
 void Socket::receive() {
-	while (true) {
-		Mutex::recvSocket.lock();
-		if (this->stopped){
-			Mutex::recvSocket.unlock();
-			break;
-		}
-		Mutex::recvSocket.unlock();
-		
-		uint8_t packetData[1024 * 8];
-		
-#if PLATFORM == PLATFORM_WINDOWS
-		typedef int socklen_t;
-#endif
-
-		sockaddr_in from;
-		socklen_t fromLength = sizeof(from);
-
-		int recvBytes = ::recvfrom(this->socket, (char*)packetData, sizeof(packetData), 0, (sockaddr*)&from, &fromLength);
-		
-		if (recvBytes >= 0) {
-			// Отправитель
-			auto addr = std::make_shared<InternetAddress>(inet_ntoa(from.sin_addr), ntohs(from.sin_port));
+	while (!this->getServer()->isShutdown()) {
+		try {
+			uint8_t packetData[1024 * 8];
 			
-			uint8_t pid = packetData[0];
-			if (pid == ID::UNCONNECTED_PING) {
-				this->getLogger()->info("Handle UnconnectedPing from {" + addr->toString() + "}");
+	#if PLATFORM == PLATFORM_WINDOWS
+			typedef int socklen_t;
+	#endif
+	
+			sockaddr_in from;
+			socklen_t fromLength = sizeof(from);
+	
+			int recvBytes = ::recvfrom(this->socket, (char*)packetData, sizeof(packetData), 0, (sockaddr*)&from, &fromLength);
+			
+			if (recvBytes >= 0) {
+				auto buffer = std::make_unique<PacketSerializer>(packetData, recvBytes);
 				
-				auto buffer = std::make_shared<PacketSerializer>(packetData, recvBytes);
+				// Отправитель
+				auto addr = std::make_unique<InternetAddress>(inet_ntoa(from.sin_addr), ntohs(from.sin_port));
 				
-				// Вытаскиваем данные из пакета
-				auto ping = std::make_shared<UnconnectedPing>();
-				ping->decode(buffer.get());
-				buffer->clear();
+				uint8_t pid = packetData[0];
+				if (pid == ID::UNCONNECTED_PING || pid == ID::UNCONNECTED_PING_OPEN_CONNECTIONS) {
+					//Logger::getInstance()->debug(LogMessage() << "Handle UnconnectedPing " << (int) pid << " from {" << addr->toString() << "}");
+					
+					// Вытаскиваем данные из пакета
+					auto ping = std::make_unique<UnconnectedPing>();
+					ping->decode(buffer.get());
+					buffer->clear();
+					
+					// Готовим пакет для отправки
+					auto packet = std::make_unique<UnconnectedPong>();
+					packet->pingTime = ping->pingTime;
+					packet->serverGUID = this->getServer()->getGUID();
+					
+					std::stringstream serverID;
+					serverID << "MCPE;" << "CMine++ Server;" << "390;" << "1.1.5;" << "0;" << "100;" << this->getServer()->getGUID() << ";"
+									 << "CMine++ Server;" << "Survival;" << "1;" << "19132;" << "19133;";
+					packet->serverID = serverID.str();
+					serverID.clear();
+					
+					// Сериализуем пакет 
+					packet->encode(buffer.get());
+				} else if (pid == ID::OPEN_CONNECTION_REQUEST_1) {
+					Logger::getInstance()->debug(LogMessage() << "Handle OpenConnectionRequest1 from {" << addr->toString() << "}");
+					
+					// Вытаскиваем данные из пакета
+					auto request = std::make_unique<OpenConnectionRequest1>();
+					request->decode(buffer.get());
+					buffer->clear();
+					
+					// Проверяем версию протокола
+					if (request->protocolVersion != ServerInfo::RAKLIB_PROTOCOL_VERSION) {
+						// Готовим пакет для отправки
+						auto packet = std::make_unique<IncompatibleProtocol>();
+						packet->protocolVersion = ServerInfo::RAKLIB_PROTOCOL_VERSION;
+						packet->serverGUID = this->getServer()->getGUID();
+						
+						// Сериализуем пакет
+						packet->encode(buffer.get());
+					} else {
+						// Готовим пакет для отправки
+						auto packet = std::make_unique<OpenConnectionReply1>();
+						packet->serverGUID = this->getServer()->getGUID();
+						packet->security = false;
+						packet->MTU = request->MTU + 46;
+						
+						// Сериализуем пакет
+						packet->encode(buffer.get());
+					}
+				} else if (pid == ID::OPEN_CONNECTION_REQUEST_2) {
+					Logger::getInstance()->debug(LogMessage() << "Handle OpenConnectionRequest2 from {" << addr->toString() << "}");
+					
+					// Вытаскиваем данные из пакета
+					auto request = std::make_unique<OpenConnectionRequest2>();
+					request->decode(buffer.get());
+					buffer->clear();
+					
+					// Готовим пакет для отправки
+					auto packet = std::make_unique<OpenConnectionReply2>();
+					packet->serverGUID = this->getServer()->getGUID();
+					packet->clientAddr = addr.get();
+					packet->MTU = request->MTU;
+					packet->encryption = false;
+					
+					// Сериализуем пакет
+					packet->encode(buffer.get());
+					
+					// Создаем сессию
+					this->sessionManager->createSession(addr.get(), request->MTU, request->userGUID);
+				} else if (pid == ID::DISCONNECT) {
+					buffer->clear();
+					Session* session = this->sessionManager->getSession(addr.get());
+					if (session == nullptr)
+							throw SocketException() << "Non-created session {" << addr->toString() << "} sent a disconnect packet.";
+					
+					this->sessionManager->closeSession(session);
+				} else { // Encapsulated
+					Logger::getInstance()->error("Test");
+					Session* session = this->sessionManager->getSession(addr.get());
+					if (session == nullptr)
+							throw SocketException() << "Non-created session {" << addr->toString() << "} sent a packet: ID " << (int) packetData[0] << " size " << recvBytes;
 				
-				// Пакет для отправления
-				auto packet = std::make_shared<UnconnectedPong>();
-				packet->pingTime = ping->pingTime; // pingTime из UnconnectedPing
-				packet->serverGUID = this->getServer()->getGUID(); // GUID сервера
-				
-				std::stringstream serverID;
-				serverID << "MCPE;" << "CMine++;" << "390;" << "1.1.5;" << "0;" << "100;" << this->getServer()->getGUID() << ";"
-								 << "CMine++;" << "Survival;" << "1;" << "19132;" << "19133;";
-				packet->serverID = serverID.str();
-				serverID.clear();
-				
-				// Сериализуем пакет 
-				packet->encode(buffer.get());
-				
+					Logger::getInstance()->warning(LogMessage() << "Undefined packet ID: " << (int) packetData[0] << " size: " << recvBytes);
+					for (int i = 0; i < buffer->getSize(); i++) {
+						std::cout << (int) buffer->getBuffer()[i] << " ";
+					}
+					std::cout << std::endl;
+					
+					session->receivePacket(buffer.get());
+					buffer->clear();
+				}
 				// Отправляем
-				this->send(buffer->getBuffer(), buffer->getSize(), from);
-			} else {
-				std::stringstream buff;
-				buff << "Handle packet: " << (int) packetData[0] << " from {" << addr->toString() << "}";
-				this->getLogger()->info(buff.str());
+				if (buffer->getSize() > 0)
+						this->send(buffer->getBuffer(), buffer->getSize(), from);
 			}
+		} catch (const Exception& ex) {
+			Logger::getInstance()->warning(LogMessage() << ex.what());
+			continue;
 		}
 	}
 }
 
-void Socket::send(uint8_t* buffer, int packetSize, sockaddr_in& from) {
+void Socket::send(const uint8_t* buffer, const int packetSize, sockaddr_in& from) {
 	int sendBytes = ::sendto(this->socket, (char*) buffer, packetSize, 0, (sockaddr*)&from, sizeof(from));
 	
 	if (sendBytes != packetSize) {
-		this->getLogger()->info("Send error");
+		Logger::getInstance()->warning(LogMessage() << "Packet " << (int) buffer[0] << " not sent");
 	}
 }
 
-// IP — inet_ntoa(from.sin_addr)
-// Port — ntohs(from.sin_port)
+void Socket::send(const uint8_t* buffer, const int packetSize, const InternetAddress* addr) {
+	sockaddr_in from;
+	from.sin_family = AF_INET;
+	from.sin_addr.s_addr = inet_addr(addr->getAddress().c_str());
+	from.sin_port = htons((unsigned short) addr->getPort());
+	
+	this->send(buffer, packetSize, from);
+}
 
 void Socket::close() {
-	Mutex::recvSocket.lock();
-	this->stopped = true;
-	Mutex::recvSocket.unlock();
-	
+	this->sessionManager.reset();
+	if (socket != -1) {
 #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
-	//close(socket);
+		//close(socket);
 #elif PLATFORM == PLATFORM_WINDOWS
-	closesocket(socket);
-	WSACleanup();
+		closesocket(socket);
+		WSACleanup();
 #endif
-	this->getServer()->getLogger()->info("Socket closed");
+	}
+	Logger::getInstance()->debug("Socket closed");
 }

@@ -1,0 +1,17 @@
+#pragma once
+
+#include "Packet.h"
+#include "ConnectedPing.h"
+#include "ConnectedPong.h"
+#include "ConnectionRequest.h"
+#include "ConnectionRequestAccepted.h"
+#include "IncompatibleProtocol.h"
+#include "OpenConnectionReply1.h"
+#include "OpenConnectionReply2.h"
+#include "OpenConnectionRequest1.h"
+#include "OpenConnectionRequest2.h"
+#include "UnconnectedPing.h"
+#include "UnconnectedPong.h"
+#include "Acknowledge.h"
+#include "EncapsulatedPacket.h"
+#include "Datagram.h"

@@ -5,8 +5,11 @@
 PacketSerializer::PacketSerializer() 
 		: BinaryStream() {}
 
-PacketSerializer::PacketSerializer(uint8_t* buffer, int recvBytes)
+PacketSerializer::PacketSerializer(const uint8_t* buffer, const int recvBytes)
 		: BinaryStream(buffer, recvBytes) {}
+
+PacketSerializer::PacketSerializer(const PacketSerializer& buffer)
+		: BinaryStream(buffer) {}
 
 std::string PacketSerializer::readString() {
 	unsigned short length = this->readUShort();
@@ -34,12 +37,12 @@ InternetAddress* PacketSerializer::readAddress() {
 	}
 }
 
-uint8_t* PacketSerializer::readLTriad() {
-	uint8_t* value = new uint8_t[3];
+uint32_t PacketSerializer::readLTriad() {
+	uint32_t value = 0;
 	
-	value[0] = this->readByte();
-	value[1] = this->readByte();
-	value[2] = this->readByte();
+	value |= this->readByte() << 0;
+	value |= this->readByte() << 8;
+	value |= this->readByte() << 16;
 	return value;
 }
 
@@ -47,7 +50,7 @@ void PacketSerializer::readMagic() {
 	this->position += 16;
 }
 
-void PacketSerializer::putString(std::string value) {
+void PacketSerializer::putString(const std::string value) {
 	unsigned short length = value.size();
 	this->putUShort(length);
 	
@@ -55,7 +58,7 @@ void PacketSerializer::putString(std::string value) {
 			this->putByte(static_cast<uint8_t>(value[i]));
 }
 
-void PacketSerializer::putAddress(InternetAddress* addr) {
+void PacketSerializer::putAddress(const InternetAddress* addr) {
 	this->putByte(addr->getVersion());
 	
 	if (addr->getVersion() == 4){
@@ -90,14 +93,10 @@ void PacketSerializer::putAddress(InternetAddress* addr) {
 	}
 }
 
-void PacketSerializer::putLTriad(uint8_t* value) {
-	value[0] &= 0xFF;
-	value[1] &= 0xFF;
-	value[2] &= 0xFF;
-	
-	this->putByte(value[0]);
-	this->putByte(value[1]);
-	this->putByte(value[2]);
+void PacketSerializer::putLTriad(const uint32_t value) {
+	this->putByte(value >> 0);
+	this->putByte(value >> 8);
+	this->putByte(value >> 16);
 }
 
 void PacketSerializer::putMagic() {

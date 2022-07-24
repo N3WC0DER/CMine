@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 
-#include "Packet.h"
+#include "network/protocol/Packet.h"
 
-class UnconnectedPong : public Packet {
+class UnconnectedPong : public Packet<UnconnectedPong> {
 public:
 	static const uint8_t PID = ID::UNCONNECTED_PONG;
 	
@@ -11,9 +11,16 @@ public:
 	int64_t serverGUID;
 	std::string serverID;
 	
-	void decodeHeader(PacketSerializer* out);
-	void decodePayload(PacketSerializer* out);
-	
-	void encodeHeader(PacketSerializer* in);
-	void encodePayload(PacketSerializer* in);
+	void decodePayload(PacketSerializer* out) {
+		this->pingTime = out->readLong();
+		this->serverGUID = out->readLong();
+		out->readMagic();
+		this->serverID = out->readString();
+	}
+	void encodePayload(PacketSerializer* in) {
+		in->putLong(this->pingTime);
+		in->putLong(this->serverGUID);
+		in->putMagic();
+		in->putString(serverID);
+	}
 };

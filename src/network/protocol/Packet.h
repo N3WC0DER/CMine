@@ -1,21 +1,32 @@
 #pragma once
 
-#include "MessageIdentifier.h"
-#include "PacketSerializer.h"
+#include "network/protocol/MessageIdentifier.h"
+#include "network/protocol/PacketSerializer.h"
 
+template <typename T>
 class Packet {
 private:
 protected:
-	virtual void decodeHeader(PacketSerializer* out) = 0;
+	void decodeHeader(PacketSerializer* out) {
+		out->readByte(); //PID
+	}
+	
 	virtual void decodePayload(PacketSerializer* out) = 0;
 	
-	virtual void encodeHeader(PacketSerializer* in) = 0;
+	void encodeHeader(PacketSerializer* in) {
+		in->putByte(T::PID);
+	}
+	
 	virtual void encodePayload(PacketSerializer* in) = 0;
 
 public:
-	static const uint8_t PID = ID::UNKNOWN;
+	void decode(PacketSerializer* out) {
+		this->decodeHeader(out);
+		this->decodePayload(out);
+	}
 	
-	void decode(PacketSerializer* out);
-	
-	void encode(PacketSerializer* in);
+	void encode(PacketSerializer* in) {
+		this->encodeHeader(in);
+		this->encodePayload(in);
+	}
 };

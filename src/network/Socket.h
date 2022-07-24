@@ -25,37 +25,25 @@
 	#include <arpa/inet.h>
 #endif
 
-#include "../Server.h"
-#include "../utils/Mutex.h"
-#include "../utils/BinaryStream.h"
-#include "protocol/MessageIdentifier.h"
-#include "protocol/PacketSerializer.h"
-#include "protocol/Packet.h"
-#include "protocol/UnconnectedPong.h"
-#include "protocol/UnconnectedPing.h"
-#include "utils/InternetAddress.h"
+#include "Server.h"
+#include "utils/Mutex.h"
+#include "network/protocol/Packets.h"
+#include "network/utils/InternetAddress.h"
+#include "network/utils/SocketException.h"
+#include "network/SessionManager.h"
 
+class SessionManager; // циклическая зависимость
 class Server; // циклическая зависимость
 
 class Socket {
 private:
-	/** @var Server* */
-	Server* server;
+	Server* server = nullptr;
+	std::unique_ptr<SessionManager> sessionManager = nullptr;
 	
-	/** @var Logger* */
-	Logger* logger = Logger::getInstance();
-	
-	/** @var uint16_t */
 	uint16_t port;
-	int socket;
+	int socket = -1;
 	
-	bool stopped = false;
-	
-	/** 
-	 * Очередь пакетов
-	 * @var std::queue<Packet*>
-	 */
-	std::queue<Packet*> packetQueue;
+	uint64_t startTime;
 	
 public:
 	Socket(Server* server, uint16_t port = 19132);
@@ -63,11 +51,10 @@ public:
 	
 	/** @return Server* */
 	Server* getServer() const;
-	/** @return Logger* */
-	Logger* getLogger() const;
+	/** @return SessionManager* */
+	SessionManager* getSessionManager() const;
 	
-	/** @return Packet* */
-	Packet* getPacket();
+	inline uint64_t getTime() const;
 	
 	/**
 	 * Создание сокета для дальнейшего прослушивания
@@ -82,7 +69,8 @@ public:
 	/** 
 	 * Отправка данных
 	 */
-	void send(uint8_t* buffer, int packetSize, sockaddr_in& from);
+	void send(const uint8_t* buffer, const int packetSize, sockaddr_in& from);
+	void send(const uint8_t* buffer, const int packetSize, const InternetAddress* addr);
 	
 	/**
 	 * Закрытие сокета
