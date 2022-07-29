@@ -26,7 +26,7 @@ public:
 	void decode(PacketSerializer* out) {
 		uint8_t flags = out->readByte();
 		this->reliability = (flags & (0b111 << 5)) >> 5;
-		this->hasSplit = (flags & 0b00010000) == 1 ? true : false;
+		this->hasSplit = (int) (flags & 0b00010000) == 1 ? true : false;
 		
 		this->length = out->readUShort() >> 3;
 		

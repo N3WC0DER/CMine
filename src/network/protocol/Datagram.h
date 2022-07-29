@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+#include "utils/Logger.h"
 #include "network/protocol/Packet.h"
 #include "network/protocol/EncapsulatedPacket.h"
 
@@ -15,7 +16,7 @@ public:
 	void decodePayload(PacketSerializer* out) {
 		this->sequenceNumber = out->readLTriad();
 		while(!out->feof()) {
-			auto temp = std::make_unique<EncapsulatedPacket>;
+			auto temp = std::make_unique<EncapsulatedPacket>();
 			temp->decode(out);
 			this->packets.push_back(std::move(temp));
 		}

@@ -7,11 +7,18 @@ protected:
 	std::stringstream error;
 	
 public:
-	Exception();
-	Exception(const Exception& ex);
-	Exception(const std::string str);
+	Exception() {}
+	Exception(const Exception& ex) {
+		this->error << ex.what();
+	}
 	
-	std::string what() const;
+	Exception(const std::string str) {
+		this->error << str;
+	}
+	
+	std::string what() const {
+		return this->error.str();
+	}
 	
 	template<class T>
 	Exception& operator<<(const T& value) {

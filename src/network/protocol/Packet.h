@@ -29,4 +29,6 @@ public:
 		this->encodeHeader(in);
 		this->encodePayload(in);
 	}
+	
+	virtual ~Packet() = default;
 };

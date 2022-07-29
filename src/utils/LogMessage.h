@@ -6,11 +6,18 @@ private:
 	std::stringstream buffer;
 	
 public:
-	LogMessage();
-	LogMessage(const LogMessage& msg);
-	LogMessage(const std::string str);
+	LogMessage() {}
+	LogMessage(const LogMessage& msg) {
+		this->buffer << msg.getMessage();
+	}
 	
-	std::string getMessage() const;
+	LogMessage(const std::string str) {
+		this->buffer << str;
+	}
+	
+	std::string getMessage() const {
+		return this->buffer.str();
+	}
 	
 	template<class T>
 	LogMessage& operator<<(const T& value) {

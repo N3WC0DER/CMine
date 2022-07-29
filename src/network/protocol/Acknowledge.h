@@ -12,13 +12,12 @@ public:
 	std::vector<uint32_t> sequenceNumbers;
 	
 	void decodePayload(PacketSerializer* out) {
-		uint32_t count = out->readShort();
+		int16_t count = out->readShort();
 		this->sequenceNumbers.clear();
-		size_t cnt = 0;
 		
-		for (int i = 0; i < count and cnt < 4096; i++) {
+		for (int i = 0; i < count; i++) {
 			if (out->readBoolean() == true) {
-				this->sequenceNumbers[cnt] = out->readLTriad();
+				this->sequenceNumbers.push_back(out->readLTriad());
 			} else {
 				uint32_t start = out->readLTriad();
 				uint32_t end = out->readLTriad();
@@ -27,7 +26,7 @@ public:
 						end = start + 512;
 				
 				for (int j = start; j < end; j++) {
-					this->sequenceNumbers[cnt] = j;
+					this->sequenceNumbers.push_back(j);
 				}
 			}
 		}

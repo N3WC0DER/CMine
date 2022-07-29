@@ -32,8 +32,8 @@
 #include "network/utils/SocketException.h"
 #include "network/SessionManager.h"
 
-class SessionManager; // циклическая зависимость
-class Server; // циклическая зависимость
+class SessionManager; // cyclic dependency
+class Server; // cyclic dependency
 
 class Socket {
 private:
@@ -54,26 +54,28 @@ public:
 	/** @return SessionManager* */
 	SessionManager* getSessionManager() const;
 	
-	inline uint64_t getTime() const;
+	inline uint64_t getTime() const {
+		return this->startTime - time(0);
+	}
 	
 	/**
-	 * Создание сокета для дальнейшего прослушивания
+	 * creating a socket for further listening
 	 */
 	void create();
 	
 	/**
-	 * Получение данных из сокета
+	 * Receiving data from a socket
 	 */
 	void receive();
 	
 	/** 
-	 * Отправка данных
+	 * Sending data
 	 */
 	void send(const uint8_t* buffer, const int packetSize, sockaddr_in& from);
 	void send(const uint8_t* buffer, const int packetSize, const InternetAddress* addr);
 	
 	/**
-	 * Закрытие сокета
+	 * Closing socket
 	 */
 	void close();
 };

@@ -12,11 +12,11 @@ public:
 	void decodePayload(PacketSerializer* out) {
 		out->readMagic();
 		this->protocolVersion = out->readByte();
-		this->MTU = out->readUShort();
+		this->MTU = out->getSize() - 18;
 	}
 	void encodePayload(PacketSerializer* in) {
 		in->putMagic();
 		in->putByte(this->protocolVersion);
-		in->putUShort(this->MTU);
+		//in->putUShort(this->MTU);
 	}
 };

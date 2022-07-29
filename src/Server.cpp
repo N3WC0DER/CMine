@@ -14,15 +14,13 @@ Server::~Server() {
 }
 
 void Server::start() {
-	srand(time(0)); // Для GUID
+	srand(time(0)); // For GUID
 	unsigned int startTime = clock();
-	Logger::getInstance()->info(LogMessage() << "[----------- " << ServerInfo::NAME << " " << ServerInfo::VERSION << " -----------]");
+	Logger::getInstance()->info(LogMessage() << "[--------- " << ServerInfo::NAME << " " << ServerInfo::VERSION << " ---------]");
 	Logger::getInstance()->info("Server is running...");
-	Mutex::serverState.lock();
 	this->state = State::RUNNING;
-	Mutex::serverState.unlock();
 	
-	// Генерация GUID
+	// GUID generation
 	this->serverGUID = rand();
 	this->serverGUID <<= 15;
 	this->serverGUID |= rand();
@@ -33,26 +31,23 @@ void Server::start() {
 	this->serverGUID <<= 3;
 	this->serverGUID |= rand() & 0b111;
 	
-	// Сокет
+	// Thread manager
+	ThreadManager::init(4);
+	
+	// Socket
 	this->socket = std::make_unique<Socket>(this);
 	this->socket->create();
 	
 	unsigned int endTime = clock();
 	Logger::getInstance()->info(LogMessage() << "Server started in " << (double) (endTime - startTime) / (double) CLOCKS_PER_SEC * 1000.0 << " ms");
 	
-	// Прослушивание сокета
-	this->recvSocket = std::make_unique<std::thread>([this] {
-			this->socket->receive();
-	});
+	// Socket listening
+	this->recvSocket = ThreadManager::getInstance()->addTask(&Socket::receive, socket.get());
 	
-	// Обновление сессий
-	this->handleSessions = std::make_unique<std::thread>([this] {
-		this->socket->getSessionManager()->updateSessions();
-	});
+	// Session update
+	this->handleSessions = ThreadManager::getInstance()->addTask(&SessionManager::updateSessions, socket->getSessionManager());
 	
-	Mutex::serverState.lock();
 	this->state = State::STARTED;
-	Mutex::serverState.unlock();
 	
 	while (true) {
 		std::string command;
@@ -69,10 +64,8 @@ uint64_t Server::getGUID() const {
 	return this->serverGUID;
 }
 
-State Server::getState() const {
-	Mutex::serverState.lock();
+Server::State Server::getState() const {
 	return this->state;
-	Mutex::serverState.unlock();
 }
 
 bool Server::isShutdown() const {
@@ -81,22 +74,10 @@ bool Server::isShutdown() const {
 
 void Server::shutdown() {
 	Logger::getInstance()->info("Stopping the server...");
-	Mutex::serverState.lock();
 	this->state = State::STOPPING;
-	Mutex::serverState.unlock();
 	
-	if (socket != nullptr) {
-		this->recvSocket->join();
-		this->recvSocket.reset();
-		if (this->socket->getSessionManager() != nullptr) {
-			this->handleSessions->join();
-			this->handleSessions.reset();
-		}
-		
-		this->socket.reset();
-	}
+	if (socket != nullptr)
+			this->socket.reset();
 	
-	Mutex::serverState.lock();
 	this->state = State::STOPPED;
-	Mutex::serverState.unlock();
 }

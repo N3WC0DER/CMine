@@ -1,35 +1,34 @@
 #pragma once
 #include <iostream>
 #include <ctime>
-#include <thread>
 #include <unistd.h>
-#include <sstream>
-#include <map>
+#include <future>
 
 #include "utils/Logger.h"
 #include "utils/Exception.h"
 #include "network/Socket.h"
 #include "ServerInfo.h"
 
-enum class State {
-	RUNNING,
-	STARTED,
-	STOPPING,
-	STOPPED
-};
-
-class Socket; // циклическая зависимость
+class Socket; // cyclic dependency
 
 class Server {
+public:
+	enum class State {
+		RUNNING,
+		STARTED,
+		STOPPING,
+		STOPPED
+	};
+
 private:
 	std::unique_ptr<Socket> socket = nullptr;
 	
-	std::unique_ptr<std::thread> recvSocket = nullptr;
-	std::unique_ptr<std::thread> handleSessions = nullptr;
+	std::future<void> recvSocket;
+	std::future<void> handleSessions;
 	
 	uint64_t serverGUID;
 	
-	State state = State::STOPPED;
+	std::atomic<State> state = State::STOPPED;
 	
 public:
 	Server();
@@ -41,7 +40,7 @@ public:
 	uint64_t getGUID() const;
 	
 	/** Состояние сервера */
-	State getState() const;
+	Server::State getState() const;
 	bool isShutdown() const;
 	
 	

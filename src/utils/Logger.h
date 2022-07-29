@@ -3,6 +3,7 @@
 #include <string>
 #include <ctime>
 #include <fstream>
+#include <mutex>
 
 #include "ServerInfo.h"
 #include "utils/LogMessage.h"
@@ -18,7 +19,10 @@ private:
 	
 	inline tm* getCurrentTime();
 	
-	const std::string fileName = "../server.log";
+	const std::string fileName = "server.log";
+	
+	std::mutex mutex;
+	
 public:
 	~Logger();
 	
