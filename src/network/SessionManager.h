@@ -7,12 +7,16 @@
 #include "network/utils/SocketException.h"
 #include "utils/Logger.h"
 
-class Socket; // циклическая зависимость
-class Session; // циклическая зависимость
+class Socket; // cyclic dependency
+class Session; // cyclic dependency
 
 class SessionManager {
 private:
+	constexpr uint16_t MIN_MTU_SIZE = 576;
+	constexpr uint16_t MAX_MTU_SIZE = 1500;
 	Socket* socket = nullptr;
+	
+	mutable std::mutex mutex;
 	
 	std::vector<std::unique_ptr<Session>> sessions;
 	

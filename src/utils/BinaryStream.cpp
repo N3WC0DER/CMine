@@ -3,21 +3,20 @@
 #include <iostream>
 
 BinaryStream::BinaryStream()
-		: size(0), position(0), endian(Endians::BENDIAN) {}
+		: buffer(nullptr), size(0), capacity(0), position(0), endian(Endian::BENDIAN) {}
 
-BinaryStream::BinaryStream(const uint8_t* buffer, const int size, Endians endian)
-		: size(size), position(0), endian(endian) {
+BinaryStream::BinaryStream(const uint8_t* buffer, const int size, Endian endian)
+		: size(size), capacity(size), position(0), endian(endian) {
 	this->buffer = new uint8_t[size];
 	for (int i = 0; i < size; i++)
 			this->buffer[i] = buffer[i];
 }
 
 BinaryStream::BinaryStream(const BinaryStream& stream)
-		: BinaryStream(stream.getBuffer(), stream.getSize()) {}
+		: BinaryStream(stream.getBuffer(), stream.getSize(), stream.getEndian()) {}
 
 BinaryStream::~BinaryStream() {
-	delete buffer;
-	this->buffer = nullptr;
+	this->clear();
 }
 
 uint8_t* BinaryStream::getBuffer() const {
@@ -28,10 +27,29 @@ int BinaryStream::getSize() const {
 	return this->size;
 }
 
+Endian BinaryStream::getEndian() const {
+	return this->endian;
+}
+
+int BinaryStream::getCapacity() const {
+	return this->capacity;
+}
+
+void BinaryStream::changeEndian(){
+	if (this->endian == Endian::BENDIAN) {
+		this->endian = Endian::LENDIAN;
+	} else {
+		this->endian = Endian::BENDIAN;
+	}
+}
+
 void BinaryStream::clear() {
+	if (this->buffer != nullptr)
+			delete this->buffer;
 	this->buffer = nullptr;
 	this->size = 0;
 	this->position = 0;
+	this->capacity = 0;
 }
 
 bool BinaryStream::feof() const {
@@ -40,9 +58,9 @@ bool BinaryStream::feof() const {
 
 //----------------------------- READ -----------------------------
 
-uint8_t* BinaryStream::read(const size_t bytes) {
+uint8_t* BinaryStream::read(const size_t bytes) const {
 	uint8_t* data = new uint8_t[bytes];
-	if (this->endian == Endians::BENDIAN) {
+	if (this->endian == Endian::BENDIAN) {
 		for (size_t i = 0; i < bytes; i++) {
 			data[i] = this->readByte();
 		}
@@ -54,17 +72,17 @@ uint8_t* BinaryStream::read(const size_t bytes) {
 	return data;
 }
 
-uint8_t BinaryStream::readByte() {
+uint8_t BinaryStream::readByte() const {
 	if (this->position >= this->size)
-			throw Exception("Binary stream out of range!");
+			throw Exception("Binary stream out of range!") << " " << this->getSize() << " " << (int) this->getBuffer()[0];
 	
 	return buffer[position++];
 }
 
-int64_t BinaryStream::readLong() {
+int64_t BinaryStream::readLong() const {
 	int64_t value = 0;
 	
-	if (this->endian == Endians::BENDIAN) {
+	if (this->endian == Endian::BENDIAN) {
 		value |= static_cast<unsigned long>(this->readByte()) << 56;
 		value |= static_cast<unsigned long>(this->readByte()) << 48;
 		value |= static_cast<unsigned long>(this->readByte()) << 40;
@@ -87,14 +105,14 @@ int64_t BinaryStream::readLong() {
 	return value;
 }
 
-int16_t BinaryStream::readShort() {
+int16_t BinaryStream::readShort() const {
 	return static_cast<int16_t>(this->readUShort());
 }
 
-uint16_t BinaryStream::readUShort() {
+uint16_t BinaryStream::readUShort() const {
 	uint16_t value = 0;
 	
-	if (this->endian == Endians::BENDIAN) {
+	if (this->endian == Endian::BENDIAN) {
 		value |= this->readByte() << 8;
 		value |= this->readByte() << 0;
 	} else {
@@ -104,13 +122,13 @@ uint16_t BinaryStream::readUShort() {
 	return value;
 }
 
-int32_t BinaryStream::readInt() {
+int32_t BinaryStream::readInt() const {
 	return static_cast<int32_t>(readUInt());
 }
 
-uint32_t BinaryStream::readUInt() {
+uint32_t BinaryStream::readUInt() const {
 	uint32_t value = 0;
-	if (this->endian == Endians::BENDIAN) {
+	if (this->endian == Endian::BENDIAN) {
 		value |= this->readByte() << 24;
 		value |= this->readByte() << 16;
 		value |= this->readByte() << 8;
@@ -124,64 +142,70 @@ uint32_t BinaryStream::readUInt() {
 	return value;
 }
 
-bool BinaryStream::readBoolean() {
+bool BinaryStream::readBoolean() const {
 	return this->readByte() == 1 ? true : false;
 }
 
 //----------------------------- PUT -----------------------------
 
 void BinaryStream::put(const uint8_t* data, const size_t bytes) {
-	uint8_t temp[size+bytes];
-	
-	// Копируем старый массив и удаляем его
-	if (this->buffer != nullptr) {
-		for (int i = 0; i < this->size; i++)
-				temp[i] = this->buffer[i];
+	if (this->capacity < this->size + bytes) {
+		uint8_t temp[size+bytes];
 		
-		delete this->buffer;
-		this->buffer = nullptr;
-	}
-	
-	// Копируем данные из параметра
-	if (this->endian == Endians::BENDIAN) {
-		for (int i = this->size; i < bytes; i++) {
-			temp[i] = data[i-size];
+		// Копируем старый массив и удаляем его
+		if (this->buffer != nullptr) {
+			for (int i = 0; i < this->size; i++)
+					temp[i] = this->buffer[i];
+			
+			delete this->buffer;
+			this->buffer = nullptr;
 		}
+		
+		// Копируем данные из параметра
+		for (int i = this->size; i < this->size + bytes; i++)
+				temp[i] = data[i-size];
+		
+		// Создаем массив и копируем все элементы из временного массива
+		this->size += bytes;
+		this->capacity = this->size + BLOCK;
+		this->buffer = new uint8_t[this->capacity];
+		
+		for (int i = 0; i < this->size; i++)
+				this->buffer[i] = temp[i];
 	} else {
-		for (int i = bytes; i > this->size; i--) {
-			temp[i] = data[i-bytes];
+		for (int i = this->size; i < this->size + bytes; i++) {
+			this->buffer[i] = data[i-size];
 		}
+		this->size += bytes;
 	}
-	
-	// Создаем массив и копируем все элементы из временного массива
-	this->size += bytes;
-	this->buffer = new uint8_t[this->size];
-	
-	for (int i = 0; i < this->size; i++)
-			this->buffer[i] = temp[i];
 }
 
 void BinaryStream::putByte(const uint8_t value) {
-	uint8_t temp[this->size+1];
-	temp[this->size] = value;
-	
-	if (this->buffer != nullptr) {
-		for (int i = 0; i < this->size; i++)
-				temp[i] = this->buffer[i];
+	if (this->capacity < this->size + 1) {
+		uint8_t temp[this->size+BLOCK];
+		temp[this->size] = value;
 		
-		delete this->buffer;
-		this->buffer = nullptr;
+		if (this->buffer != nullptr) {
+			for (int i = 0; i < this->size; i++)
+					temp[i] = this->buffer[i];
+			
+			delete this->buffer;
+			this->buffer = nullptr;
+		}
+		
+		this->size++;
+		this->capacity = this->size + BLOCK;
+		this->buffer = new uint8_t[this->capacity];
+		
+		for (int i = 0; i < this->size; i++)
+				this->buffer[i] = temp[i];
+	} else {
+		this->buffer[this->size++] = value;
 	}
-	
-	this->size++;
-	this->buffer = new uint8_t[this->size];
-	
-	for (int i = 0; i < this->size; i++)
-			this->buffer[i] = temp[i];
 }
 
 void BinaryStream::putLong(const int64_t value) {
-	if (endian == Endians::BENDIAN) {
+	if (endian == Endian::BENDIAN) {
 		this->putByte(value >> 56);
 		this->putByte(value >> 48);
 		this->putByte(value >> 40);
@@ -207,7 +231,7 @@ void BinaryStream::putShort(const int16_t value) {
 }
 
 void BinaryStream::putUShort(const uint16_t value) {
-	if (endian == Endians::BENDIAN) {
+	if (endian == Endian::BENDIAN) {
 		this->putByte(value >> 8);
 		this->putByte(value >> 0);
 	} else {
@@ -221,7 +245,7 @@ void BinaryStream::putInt(const int32_t value) {
 }
 
 void BinaryStream::putUInt(const uint32_t value) {
-	if (endian == Endians::BENDIAN) {
+	if (endian == Endian::BENDIAN) {
 		this->putByte(value >> 24);
 		this->putByte(value >> 16);
 		this->putByte(value >> 8);

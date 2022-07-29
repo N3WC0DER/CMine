@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-Session::Session(Socket* sock, InternetAddress* addr, uint16_t MTU, int64_t GUID)
+Session::Session(Socket* sock, const InternetAddress* addr, const uint16_t MTU, const int64_t GUID)
 		: socket(sock), MTU(MTU), GUID(GUID) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	this->addr = std::make_unique<InternetAddress>(*addr);
 	using std::placeholders::_1;
 	this->layer = std::make_unique<ReliabilityLayer>(std::bind(&Session::sendPacket, this, _1));
@@ -24,19 +25,33 @@ int64_t Session::getGUID() const {
 	return this->GUID;
 }
 
+Session::State Session::getState() const {
+	return this->state;
+}
+
+bool Session::isConnected() const {
+	return this->state == State::CONNECTED;
+}
+
 void Session::update() {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	if (time(0) - lastUpdate > 5000)
-			this->disconnect();
+			this->disconnect("timeout");
 	
-	/*if (!this->layer->ACKQueue.sequenceNumbers.empty()) {
-		PacketSerializer buffer;
-		this->layer->ACKQueue.decode(&buffer);
-		this->sendPacket(&buffer);
-	}*/
+	if (!this->layer->ACKQueue.sequenceNumbers.empty()) {
+		auto buffer = std::make_unique<PacketSerializer>();
+		this->layer->ACKQueue.encode(buffer.get());
+		this->layer->ACKQueue.sequenceNumbers.clear();
+		this->sendPacket(buffer.get());
+		Logger::getInstance()->notice("ACK sended!");
+		this->lastUpdate = time(0);
+	}
 	if (!this->layer->NACKQueue.sequenceNumbers.empty()) {
-		auto buffer = std::make_unique<PacketSerializer>;
-		this->layer->NACKQueue.decode(&buffer);
-		this->sendPacket(buffer);
+		auto buffer = std::make_unique<PacketSerializer>();
+		this->layer->NACKQueue.encode(buffer.get());
+		this->layer->NACKQueue.sequenceNumbers.clear();
+		this->sendPacket(buffer.get());
+		Logger::getInstance()->notice("NACK sended!");
 		this->lastUpdate = time(0);
 	}
 	if (!this->layer->updateQueue.empty()) {
@@ -46,11 +61,14 @@ void Session::update() {
 	}
 }
 
-void Session::disconnect() {
+void Session::disconnect(std::string reason) {
+	Logger::getInstance()->notice(LogMessage() << "Session {" << this->addr->toString() << "} disconnected. Reason: " << reason);
+	this->state = State::DISCONNECTED;
 	this->socket->getSessionManager()->closeSession(this->addr.get());
 }
 
 void Session::receivePacket(PacketSerializer* buffer) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	this->lastUpdate = time(0);
 	
 	uint8_t pid = buffer->getBuffer()[0];
@@ -62,6 +80,7 @@ void Session::receivePacket(PacketSerializer* buffer) {
 		for (uint32_t seqNumber : ack.sequenceNumbers) {
 			if (this->layer->recoveryQueue[seqNumber].get() != nullptr) {
 				this->layer->recoveryQueue[seqNumber].reset(nullptr);
+				this->layer->recoveryQueue.erase(seqNumber);
 			}
 		}
 	} else if (pid == ID::NACK) {
@@ -75,7 +94,13 @@ void Session::receivePacket(PacketSerializer* buffer) {
 			}
 		}
 	} else if (pid >= 0x80 && pid <= 0x8F) {
-		auto datagram = std::make_unique<Datagram>;
+		auto datagram = std::make_unique<Datagram>();
+		
+		/*for (int i = 0; i < buffer->getSize(); i++) {
+			std::cout << (int) buffer->getBuffer()[i] << " ";
+		}
+		std::cout << std::endl;*/
+		
 		datagram->decode(buffer);
 		
 		size_t discardPacket = this->layer->handleDatagram(datagram.get());
@@ -100,7 +125,7 @@ void Session::receivePacket(PacketSerializer* buffer) {
 			
 			// Добавляем пакеты в дейтаграмму, пока не дойдем до очередного пропуска
 			while (minOrderedIndex(i) == this->layer->recvOrderedIndex[i]) {
-				datagram->packets.push_back(this->layer->recvOrderedPackets[i][this->layer->recvOrderedIndex[i]].move());
+				datagram->packets.push_back(std::move(this->layer->recvOrderedPackets[i][this->layer->recvOrderedIndex[i]]));
 				this->layer->recvOrderedIndex[i]++;
 				this->layer->recvOrderedPackets[i].erase(minOrderedIndex(i));
 				
@@ -111,10 +136,9 @@ void Session::receivePacket(PacketSerializer* buffer) {
 		Logger::getInstance()->notice(LogMessage() << "Session {" << this->addr->toString() << "} receive " << datagram->packets.size() << " packets, discard " << discardPacket << " packets, add " << countLateOrderedPackets << " packets");
 		
 		if (!datagram->packets.empty()) {
-			std::thread th([this, &datagram] {
-				this->handleRawPacket(datagram.move());
+			auto f = ThreadManager::getInstance()->addTask([this, d = std::move(datagram)] {
+				this->handleRawPacket(d.get());
 			});
-			th.detach();
 		}
 	} else {
 		throw SocketException() << "Undefined packet ID: " << pid;
@@ -122,30 +146,59 @@ void Session::receivePacket(PacketSerializer* buffer) {
 }
 
 void Session::handleRawPacket(Datagram* datagram) {
-	for (auto packet : datagram->packets) {
-		auto buffer = std::make_unique<PacketSerializer>(packet->buffer.getBuffer(), packet->length);
-		//packet->encode(buffer);
+	for (auto packet = datagram->packets.begin(); packet != datagram->packets.end(); packet++) {
+		auto buffer = std::make_unique<PacketSerializer>((*packet)->buffer.getBuffer(), (*packet)->length);
 		uint8_t pid = buffer->getBuffer()[0];
 		if (pid == ID::CONNECTION_REQUEST) {
 			Logger::getInstance()->notice("Handle ConnectionRequest packet");
-			auto recvPacket = std::make_unique<ConnectionRequest>;
-			recvPacket->decode(buffer);
+			auto recvPacket = std::make_unique<ConnectionRequest>();
+			recvPacket->decode(buffer.get());
 			buffer->clear();
-			uint64_t time = recvPacket->time;
 			
-			auto sendPacket = std::make_unique<ConnectionRequestAccepted>;
+			auto sendPacket = std::make_unique<ConnectionRequestAccepted>();
 			sendPacket->clientAddress = this->addr.get();
-			sendPacket->requestTime = time;
+			sendPacket->requestTime = recvPacket->time;
 			sendPacket->time = this->socket->getTime();
-			sendPacket->encode(buffer);
+			sendPacket->encode(buffer.get());
 			
-			this->layer->sendEncapsulated(buffer, Reliability::UNRELIABLE, 0, QueuePriority::IMMEDIATE);
+			//std::scoped_lock<std::mutex> lock(this->mutex);
+			this->layer->sendEncapsulated(buffer.get(), Reliability::UNRELIABLE, 0, QueuePriority::IMMEDIATE);
 		} else if (pid == ID::NEW_INCOMING_CONNECTION) {
 			Logger::getInstance()->notice("Handle NewIncomingConnection packet");
+			buffer->clear();
+			
+			this->state = State::CONNECTED;
+			
+			/*auto sendPing = std::make_unique<ConnectedPing>();
+			sendPing->pingTime = this->socket->getTime();
+			sendPing->encode(buffer.get());
+			
+			this->layer->sendEncapsulated(buffer.get(), Reliability::UNRELIABLE, 0);*/
+		} else if (pid == ID::CONNECTED_PING) {
+			Logger::getInstance()->notice("Handle ConnectedPing packet");
+			auto recvPacket = std::make_unique<ConnectedPing>();
+			recvPacket->decode(buffer.get());
+			buffer->clear();
+			
+			auto sendPacket = std::make_unique<ConnectedPong>();
+			sendPacket->pingTime = recvPacket->pingTime;
+			sendPacket->pongTime = this->socket->getTime();
+			sendPacket->encode(buffer.get());
+			
+			this->layer->sendEncapsulated(buffer.get(), Reliability::UNRELIABLE, 0);
+		} else if (pid == ID::CONNECTED_PONG) {
+			Logger::getInstance()->notice("Handle ConnectedPong packet");
+			auto recvPacket = std::make_unique<ConnectedPong>();
+			recvPacket->decode(buffer.get());
+			
+			uint64_t currentTime = this->socket->getTime();
+			if (currentTime < recvPacket->pingTime) {
+				Logger::getInstance()->debug(LogMessage() << "Received invalid pong: timestamp is in the future by " << recvPacket->pingTime - currentTime << " ms");
+			}
 		} else {
-			Logger::getInstance()->warning(LogMessage() << "Undefined packet ID: " << (int) pid << " size: " << packet->length);
-			for (int i = 0; i < packet->buffer.getSize(); i++) {
-				std::cout << (int) packet->buffer.getBuffer()[i] << " ";
+			Logger::getInstance()->warning(LogMessage() << "Undefined packet ID: " << (int) pid << " size: " << buffer->getSize());
+			for (int i = 0; i < buffer->getSize(); i++) {
+				std::cout << (int) buffer->getBuffer()[i] << " ";
 			}
 			std::cout << std::endl;
 		}

@@ -1,7 +1,7 @@
 #pragma once
 #include "utils/Exception.h"
 
-enum class Endians {
+enum class Endian {
 	BENDIAN,
 	LENDIAN
 };
@@ -10,17 +10,23 @@ class BinaryStream {
 protected:
 	uint8_t* buffer = nullptr;
 	int size;
-	int position;
-	Endians endian = Endians::BENDIAN;
+	int capacity;
+	static constexpr int BLOCK = 4;
+	mutable int position;
+	Endian endian = Endian::BENDIAN;
 	
 public:
 	BinaryStream();
-	BinaryStream(const uint8_t* buffer, const int size, Endians endian = Endians::BENDIAN);
+	BinaryStream(const uint8_t* buffer, const int size, const Endian endian = Endian::BENDIAN);
 	BinaryStream(const BinaryStream& stream);
 	~BinaryStream();
 	
 	uint8_t* getBuffer() const;
 	int getSize() const;
+	Endian getEndian() const;
+	int getCapacity() const;
+	
+	void changeEndian();
 	
 	void clear();
 	
@@ -29,43 +35,43 @@ public:
 	/**
 	 * Вывод данных фиксированной длины из потока
 	 */
-	uint8_t* read(const size_t bytes);
+	uint8_t* read(const size_t bytes) const;
 	
 	/** 
 	 * Вывод байта из потока.
 	 * @throws Exception
 	 */
-	uint8_t readByte();
+	uint8_t readByte() const;
 	
 	/**
 	 * Вывод 8 подписанных байтов (signed long) из потока.
 	 */
-	int64_t readLong();
+	int64_t readLong() const;
 	
 	/**
 	 * Вывод 2 подписанных байтов (signed short) из потока.
 	 */
-	int16_t readShort();
+	int16_t readShort() const;
 	
 	/**
 	 * Вывод 2 неподписанных байтов (unsigned short) из потока.
 	 */
-	uint16_t readUShort();
+	uint16_t readUShort() const;
 	
 	/**
 	 * Вывод 4 подписанных байтов (int) из потока.
 	 */
-	int32_t readInt();
+	int32_t readInt() const;
 	
 	/**
 	 * Вывод 4 неподписанных байтов (unsigned int) из потока.
 	 */
-	uint32_t readUInt();
+	uint32_t readUInt() const;
 	
 	/** 
 	 * Вывод 1 бита (bool) из потока.
 	 */
-	bool readBoolean();
+	bool readBoolean() const;
 	
 	/**
 	 * Ввод данных фиксированной длины в поток.

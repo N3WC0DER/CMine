@@ -36,32 +36,33 @@ void ReliabilityLayer::handleEncapsulated(Datagram* datagram) {
 		if (PacketReliability::isReliable((*packet)->reliability)) {
 			if (find(this->recvReliableIndex.begin(), this->recvReliableIndex.end(), (*packet)->messageIndex) != this->recvReliableIndex.end()) {
 				Logger::getInstance()->warning(LogMessage() << "Duplicate message index (reliable packet): " << (*packet)->messageIndex);
-				if (PacketReliability::isOrdered(packet->reliability))
+				if (PacketReliability::isOrdered((*packet)->reliability))
 						Logger::getInstance()->warning(LogMessage() << "Order channel: " << (*packet)->orderChannel);
 				Logger::getInstance()->warning(LogMessage() << "Has split: " << ((*packet)->hasSplit ? "true" : "false"));
 				Logger::getInstance()->warning(LogMessage() << "ID: " << (int) (*packet)->buffer.getBuffer()[0]);
 				Logger::getInstance()->warning(LogMessage() << "Length: " << (*packet)->length);
-				(*packet).reset(nullptr);
+				(*packet).reset();
 				continue;
 			}
 			this->recvReliableIndex.push_back((*packet)->messageIndex);
 		}
 		
 		if ((*packet)->hasSplit && !this->handleSplit((*packet).get())) {
-			(*packet).reset(nullptr));
+			Logger::getInstance()->debug("Split packet");
+			(*packet).reset();
 			continue;
 		}
 		
 		if (PacketReliability::isSequencedOrOrdered((*packet)->reliability) && (*packet)->orderChannel > MAX_ORDER_CHANNELS) {
 			Logger::getInstance()->warning(LogMessage() << "Bad order channel: " << (*packet)->orderChannel);
-			(*packet).reset(nullptr);
+			(*packet).reset();
 			continue;
 		}
 		
 		if (PacketReliability::isSequenced((*packet)->reliability)) {
 			if ((*packet)->sequencedIndex < this->recvSequencedIndex[(*packet)->orderChannel]) {
 				Logger::getInstance()->warning(LogMessage() << "Old sequenced packet (sequence index " << (*packet)->sequencedIndex << ")");
-				(*packet).reset(nullptr);
+				(*packet).reset();
 				continue;
 			}
 			
@@ -70,24 +71,25 @@ void ReliabilityLayer::handleEncapsulated(Datagram* datagram) {
 			if ((*packet)->orderedIndex == this->recvOrderedIndex[(*packet)->orderChannel]) {
 				this->recvOrderedIndex[(*packet)->orderChannel] = (*packet)->orderedIndex + 1;
 			} else if ((*packet)->orderedIndex > this->recvOrderedIndex[(*packet)->orderChannel]) {
-				auto pck = std::make_unique<EncapsulatedPacket>;
+				auto pck = std::make_unique<EncapsulatedPacket>();
 				pck->buffer = (*packet)->buffer;
 				pck->length = (*packet)->length;
-				this->recvOrderedPackets[(*packet)->orderChannel][(*packet)->orderedIndex] = pck;
-				(*packet).reset(nullptr);
+				this->recvOrderedPackets[(*packet)->orderChannel][(*packet)->orderedIndex] = std::move(pck);
+				Logger::getInstance()->debug("Bad order packet");
+				(*packet).reset();
 				continue;
 			} else {
-				(*packet).reset(nullptr);
+				(*packet).reset();
 				continue;
 			}
 		}
-		auto pck = std::make_unique<EncapsulatedPacket>;
+		auto pck = std::make_unique<EncapsulatedPacket>();
 		pck->buffer = (*packet)->buffer;
 		pck->length = (*packet)->length;
-		handledPackets.push_back(pck);
-		(*packet).reset(nullptr);
+		handledPackets.push_back(std::move(pck));
+		(*packet).reset();
 	}
-	datagram->packets = handledPackets;
+	datagram->packets = std::move(handledPackets);
 }
 
 bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
@@ -110,10 +112,10 @@ bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
 		}
 	}
 	
-	auto temp = std::make_unique<EncapsulatedPacket>;
+	auto temp = std::make_unique<EncapsulatedPacket>();
 	temp->buffer = packet->buffer;
 	temp->length = packet->length;
-	this->splitPackets[splitID][partIndex] = temp.move();
+	this->splitPackets[splitID][partIndex] = std::move(temp);
 	
 	if (this->splitPackets[splitID].size() != totalParts) {
 		return false;
@@ -123,7 +125,7 @@ bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
 	std::vector<std::unique_ptr<EncapsulatedPacket>> parts;
 	for (size_t i = 0; i < this->splitPackets[splitID].size(); i++) {
 		totalLength += this->splitPackets[splitID][i]->length;
-		parts[i] = this->splitPackets[splitID][i].move();
+		parts[i] = std::move(this->splitPackets[splitID][i]);
 	}
 	
 	packet->length = totalLength;
@@ -131,7 +133,7 @@ bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
 	
 	for (auto part = parts.begin(); part != parts.end(); part++) {
 		packet->buffer.put((*part)->buffer.read((*part)->length), (*part)->length);
-		(*part).reset(nullptr);
+		(*part).reset();
 	}
 	
 	this->splitPackets[splitID].clear();
@@ -140,13 +142,13 @@ bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
 }
 
 void ReliabilityLayer::sendEncapsulated(PacketSerializer* buffer, Reliability reliability, uint8_t orderChannel, QueuePriority priority) {
-	auto packet = std::make_unique<EncapsulatedPacket>;
+	auto packet = std::make_unique<EncapsulatedPacket>();
 	packet->buffer = *buffer;
 	packet->length = buffer->getSize();
 	
 	if (orderChannel > MAX_ORDER_CHANNELS) {
 		Logger::getInstance()->warning(LogMessage() << "Order channel out of range: " << orderChannel);
-		packet.reset(nullptr);
+		packet.reset();
 		return;
 	}
 	
@@ -174,7 +176,7 @@ void ReliabilityLayer::sendEncapsulated(PacketSerializer* buffer, Reliability re
 			} else {
 				temp = std::make_unique<PacketSerializer>(buffer->read(i), i);
 			}
-			auto pck = std::make_unique<EncapsulatedPacket>;
+			auto pck = std::make_unique<EncapsulatedPacket>();
 			pck->buffer = *temp;
 			pck->length = temp->getSize();
 			
@@ -199,7 +201,7 @@ void ReliabilityLayer::sendEncapsulated(PacketSerializer* buffer, Reliability re
 		if (priority == QueuePriority::IMMEDIATE) {
 			this->sendDatagram(packet.get());
 		} else if (priority == QueuePriority::UPDATE) {
-			this->updateQueue.push_back(packet.move());
+			this->updateQueue.push_back(std::move(packet));
 		} else if (priority == QueuePriority::FULLQ) {
 			size_t length = packet->getLength();
 			for (auto pck = this->normalQueue.begin(); pck != this->normalQueue.end(); pck++) {
@@ -211,7 +213,7 @@ void ReliabilityLayer::sendEncapsulated(PacketSerializer* buffer, Reliability re
 				this->normalQueue.clear();
 			}
 			
-			this->normalQueue.push_back(packet.move());
+			this->normalQueue.push_back(std::move(packet));
 		} else {
 			Logger::getInstance()->warning(LogMessage() << "Bad priority: " << (int) priority);
 		}
@@ -222,25 +224,32 @@ void ReliabilityLayer::sendDatagram(std::vector<std::unique_ptr<EncapsulatedPack
 	if (packets.empty())
 			return;
 	
+	
 	Datagram datagram;
 	datagram.sequenceNumber = this->sendSequenceNumber++;
 	
-	while (datagram.getTotalLength() + (*packets.front())->getLength() + 36 < this->sessionMTU) {
-		datagram.packets.push_back(packets.front());
+	while (!packets.empty() && datagram.getTotalLength() + packets.front()->getLength() + 36 < this->sessionMTU) {
+		datagram.packets.push_back(std::move(packets.front()));
 		packets.erase(packets.begin());
 	}
 	
-	auto buffer = std::make_unique<PacketSerializer>;
+	if (datagram.packets.empty()) {
+		Logger::getInstance()->warning(LogMessage() << "Test" << packets.size());
+		return;
+	}
+	
+	auto buffer = std::make_unique<PacketSerializer>();
 	datagram.encode(buffer.get());
 	
-	auto recoveryPacket = std::make_unique<PacketSerializer>(buffer);
-	this->recoveryQueue[datagram.sequenceNumber] = recoveryPacket.move();
+	auto recoveryPacket = std::make_unique<PacketSerializer>(*(buffer.get()));
+	this->recoveryQueue.insert(std::pair(datagram.sequenceNumber, std::move(recoveryPacket)));
 	
 	(this->sendPacket)(buffer.get());
 }
 
 void ReliabilityLayer::sendDatagram(EncapsulatedPacket* packet) {
 	std::vector<std::unique_ptr<EncapsulatedPacket>> packets;
-	packets.push_back(packet);
+	std::unique_ptr<EncapsulatedPacket> temp(packet);
+	packets.push_back(std::move(temp));
 	this->sendDatagram(packets);
 }

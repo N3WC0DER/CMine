@@ -1,4 +1,4 @@
-#include "utils/Logger.h"
+#include "Logger.h"
 
 std::unique_ptr<Logger> Logger::instance = nullptr;
 
@@ -35,12 +35,13 @@ inline tm* Logger::getCurrentTime() {
 }
 
 void Logger::info(const std::string data) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	tm *currentTime = Logger::getCurrentTime();
 	std::ofstream log(this->fileName, std::ios_base::app);
-	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << std::setfill('0') << currentTime->tm_mon << "|" << std::setw(2) << std::setfill('0') << currentTime->tm_hour << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_min << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_sec << "}"
-			<< " " << data << Colors::CLEAR << std::endl;
-	log << "{" << currentTime->tm_mday << "—" << currentTime->tm_mon << "|" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << data << std::endl;
+	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+						<< std::setfill(' ') << std::setw(9) << Colors::CYAN << " [" << Colors::CLEAR << "info" << Colors::CYAN << "] " << Colors::GREEN << "-> " << Colors::CLEAR << data << Colors::CLEAR << std::endl;
+	log << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+			<< std::setfill(' ') << std::setw(15) << " [info] -> " << data << std::endl;
 	log.close();
 }
 
@@ -49,12 +50,14 @@ void Logger::info(const LogMessage& msg) {
 }
 
 void Logger::notice(const std::string data) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	tm *currentTime = Logger::getCurrentTime();
 	std::ofstream log(this->fileName, std::ios_base::app);
-	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << std::setfill('0') << currentTime->tm_mon << "|" << std::setw(2) << std::setfill('0') << currentTime->tm_hour << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_min << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_sec << "}"
-			<< " notice: " << Colors::GREEN << data << Colors::CLEAR << std::endl;
-	log << "{" << currentTime->tm_mday << "—" << currentTime->tm_mon << "|" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << data << std::endl;
+	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+						<< std::setfill(' ') << std::setw(7) << Colors::CYAN << " [" << Colors::CLEAR << "notice" << Colors::CYAN << "] " << Colors::GREEN << "-> " << Colors::BLUE << data << Colors::CLEAR << std::endl;
+	log << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+			<< std::setfill(' ') << std::setw(15) << " [notice] -> " << data << std::endl;
+	log.close();
 }
 
 void Logger::notice(const LogMessage& msg) {
@@ -62,12 +65,14 @@ void Logger::notice(const LogMessage& msg) {
 }
 
 void Logger::warning(const std::string data) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	tm *currentTime = Logger::getCurrentTime();
 	std::ofstream log(this->fileName, std::ios_base::app);
-	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << std::setfill('0') << currentTime->tm_mon << "|" << std::setw(2) << std::setfill('0') << currentTime->tm_hour << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_min << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_sec << "}"
-			<< " warning: " << Colors::YELLOW << data << Colors::CLEAR << std::endl;
-	log << "{" << currentTime->tm_mday << "—" << currentTime->tm_mon << "|" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << data << std::endl;
+	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+						<< std::setfill(' ') << std::setw(6) << Colors::CYAN << " [" << Colors::CLEAR << "warning" << Colors::CYAN << "] " << Colors::GREEN << "-> " << Colors::YELLOW << data << Colors::CLEAR << std::endl;
+	log << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+			<< std::setfill(' ') << std::setw(15) << " [warning] -> " << data << std::endl;
+	log.close();
 }
 
 void Logger::warning(const LogMessage& msg) {
@@ -76,12 +81,14 @@ void Logger::warning(const LogMessage& msg) {
 
 void Logger::debug(const std::string data) {
 	if (ServerInfo::DEVELOP) {
+		std::scoped_lock<std::mutex> lock(this->mutex);
 		tm *currentTime = Logger::getCurrentTime();
 		std::ofstream log(this->fileName, std::ios_base::app);
-		std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << std::setfill('0') << currentTime->tm_mon << "|" << std::setw(2) << std::setfill('0') << currentTime->tm_hour << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_min << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_sec << "}"
-				<< " debug: " << Colors::MAGENTA << data << Colors::CLEAR << std::endl;
-		log << "{" << currentTime->tm_mday << "—" << currentTime->tm_mon << "|" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-				<< " " << data << std::endl;
+		std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+							<< std::setfill(' ') << std::setw(8) << Colors::CYAN << " [" << Colors::CLEAR << "debug" << Colors::CYAN << "] " << Colors::GREEN << "-> " << Colors::MAGENTA << data << Colors::CLEAR << std::endl;
+		log << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+				<< std::setfill(' ') << std::setw(15) << " [debug] -> " << data << std::endl;
+		log.close();
 	}
 }
 
@@ -90,12 +97,14 @@ void Logger::debug(const LogMessage& msg) {
 }
 
 void Logger::error(const std::string data) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	tm *currentTime = Logger::getCurrentTime();
 	std::ofstream log(this->fileName, std::ios_base::app);
-	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << std::setfill('0') << currentTime->tm_mon << "|" << std::setw(2) << std::setfill('0') << currentTime->tm_hour << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_min << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_sec << "}"
-			<< " error: " << Colors::RED << data << Colors::CLEAR << std::endl;
-	log << "{" << currentTime->tm_mday << "—" << currentTime->tm_mon << "|" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << data << std::endl;
+	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+						<< std::setfill(' ') << std::setw(8) << Colors::CYAN << " [" << Colors::CLEAR << "error" << Colors::CYAN << "] " << Colors::GREEN << "-> " << Colors::RED << data << Colors::CLEAR << std::endl;
+	log << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+			<< std::setfill(' ') << std::setw(15) << " [error] -> " << data << std::endl;
+	log.close();
 }
 
 void Logger::error(const LogMessage& msg) {
@@ -103,12 +112,14 @@ void Logger::error(const LogMessage& msg) {
 }
 
 void Logger::critical(const std::string data) {
+	std::scoped_lock<std::mutex> lock(this->mutex);
 	tm *currentTime = Logger::getCurrentTime();
 	std::ofstream log(this->fileName, std::ios_base::app);
-	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << std::setfill('0') << currentTime->tm_mon << "|" << std::setw(2) << std::setfill('0') << currentTime->tm_hour << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_min << ":" << std::setw(2) << std::setfill('0') << currentTime->tm_sec << "}"
-			<< " CRITICAL: " << Colors::RED << Colors::BOLD << data << Colors::CLEAR << std::endl;
-	log << "{" << currentTime->tm_mday << "—" << currentTime->tm_mon << "|" << currentTime->tm_hour << ":" << currentTime->tm_min << ":" << currentTime->tm_sec << "}"
-			<< " " << data << std::endl;
+	std::cout << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+						<< std::setfill(' ') << Colors::CYAN << " [" << Colors::CLEAR << "CRITICAL" << Colors::CYAN << "] " << Colors::GREEN << "-> " << Colors::RED << Colors::BOLD << data << Colors::CLEAR << std::endl;
+	log << "{" << std::setw(2) << std::setfill('0') << currentTime->tm_mday << "—" << std::setw(2) << currentTime->tm_mon << "|" << std::setw(2) << currentTime->tm_hour << ":" << std::setw(2) << currentTime->tm_min << ":" << std::setw(2) << currentTime->tm_sec << "}"
+			<< std::setfill(' ') << std::setw(15) << " [CRITICAL] -> " << data << std::endl;
+	log.close();
 }
 
 void Logger::critical(const LogMessage& msg) {

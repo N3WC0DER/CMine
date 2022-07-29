@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <functional>
 
 #include "network/Session.h"
@@ -38,11 +39,11 @@ private:
 	
 	std::vector<uint32_t> recvReliableIndex;
 	
-	std::vector<std::vector<std::unique_ptr<EncapsulatedPacket>>> splitPackets{MAX_SPLIT_PACKETS}// = std::vector<std::vector<std::unique_ptr<EncapsulatedPacket>>>(MAX_SPLIT_PACKETS);
+	std::vector<std::vector<std::unique_ptr<EncapsulatedPacket>>> splitPackets{MAX_SPLIT_PACKETS};
 	
-	std::vector<uint32_t> recvSequencedIndex{MAX_ORDER_CHANNELS}// = std::vector<uint32_t>(MAX_ORDER_CHANNELS);
-	std::vector<uint32_t> recvOrderedIndex{MAX_ORDER_CHANNELS}// = std::vector<uint32_t>(MAX_ORDER_CHANNELS);
-	std::vector<std::map<uint32_t, std::unique_ptr<EncapsulatedPacket>>> recvOrderedPackets{MAX_ORDER_CHANNELS}// = std::vector<std::map<uint32_t, std::unique_ptr<EncapsulatedPacket>>>(MAX_ORDER_CHANNELS);
+	std::vector<uint32_t> recvSequencedIndex{MAX_ORDER_CHANNELS};
+	std::vector<uint32_t> recvOrderedIndex{MAX_ORDER_CHANNELS};
+	std::vector<std::map<uint32_t, std::unique_ptr<EncapsulatedPacket>>> recvOrderedPackets{MAX_ORDER_CHANNELS};
 	
 	uint32_t sendSequenceNumber = 0;
 	
@@ -50,12 +51,12 @@ private:
 	
 	uint16_t splitID = 0;
 	
-	std::vector<uint32_t> sendSequencedIndex{MAX_ORDER_CHANNELS}// = std::vector<uint32_t>(MAX_ORDER_CHANNELS);
-	std::vector<uint32_t> sendOrderedIndex{MAX_ORDER_CHANNELS}// = std::vector<uint32_t>(MAX_ORDER_CHANNELS);
+	std::vector<uint32_t> sendSequencedIndex{MAX_ORDER_CHANNELS};
+	std::vector<uint32_t> sendOrderedIndex{MAX_ORDER_CHANNELS};
 	
 	std::vector<std::unique_ptr<EncapsulatedPacket>> normalQueue;
 	std::vector<std::unique_ptr<EncapsulatedPacket>> updateQueue;
-	std::vector<std::unique_ptr<PacketSerializer>> recoveryQueue;
+	std::unordered_map<uint32_t, std::unique_ptr<PacketSerializer>> recoveryQueue;
 	
 public:
 	ReliabilityLayer(std::function<void(const PacketSerializer*)> sendPacket);
@@ -64,7 +65,7 @@ public:
 	void handleEncapsulated(Datagram* datagram);
 	bool handleSplit(EncapsulatedPacket* buffer);
 	
-	void sendEncapsulated(PacketSerializer* buffer, Reliability reliability, uint8_t orderChannel, QueuePriority priority);
+	void sendEncapsulated(PacketSerializer* buffer, Reliability reliability, uint8_t orderChannel, QueuePriority priority = QueuePriority::UPDATE);
 	void sendDatagram(std::vector<std::unique_ptr<EncapsulatedPacket>>& packets);
 	void sendDatagram(EncapsulatedPacket* packet);
 	
