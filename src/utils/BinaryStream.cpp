@@ -74,7 +74,7 @@ uint8_t* BinaryStream::read(const size_t bytes) const {
 
 uint8_t BinaryStream::readByte() const {
 	if (this->position >= this->size)
-			throw Exception("Binary stream out of range!") << " " << this->getSize() << " " << (int) this->getBuffer()[0];
+			throw Exception("Binary stream out of range!");
 	
 	return buffer[position++];
 }
@@ -148,11 +148,12 @@ bool BinaryStream::readBoolean() const {
 
 //----------------------------- PUT -----------------------------
 
+// TODO: Set a size limit
 void BinaryStream::put(const uint8_t* data, const size_t bytes) {
 	if (this->capacity < this->size + bytes) {
 		uint8_t temp[size+bytes];
 		
-		// Копируем старый массив и удаляем его
+		// Copy the old array and delete it
 		if (this->buffer != nullptr) {
 			for (int i = 0; i < this->size; i++)
 					temp[i] = this->buffer[i];
@@ -161,11 +162,11 @@ void BinaryStream::put(const uint8_t* data, const size_t bytes) {
 			this->buffer = nullptr;
 		}
 		
-		// Копируем данные из параметра
+		// Copy data from parameter
 		for (int i = this->size; i < this->size + bytes; i++)
 				temp[i] = data[i-size];
 		
-		// Создаем массив и копируем все элементы из временного массива
+		// Create an array and copy all elements from a temporary array
 		this->size += bytes;
 		this->capacity = this->size + BLOCK;
 		this->buffer = new uint8_t[this->capacity];

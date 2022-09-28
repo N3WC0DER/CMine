@@ -44,9 +44,6 @@ void Server::start() {
 	// Socket listening
 	this->recvSocket = ThreadManager::getInstance()->addTask(&Socket::receive, socket.get());
 	
-	// Session update
-	this->handleSessions = ThreadManager::getInstance()->addTask(&SessionManager::updateSessions, socket->getSessionManager());
-	
 	this->state = State::STARTED;
 	
 	while (true) {
@@ -76,6 +73,7 @@ void Server::shutdown() {
 	Logger::getInstance()->info("Stopping the server...");
 	this->state = State::STOPPING;
 	
+	this->recvSocket.get();
 	if (socket != nullptr)
 			this->socket.reset();
 	

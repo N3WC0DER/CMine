@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <sstream>
-#include <queue>
 
 #define PLATFORM_WINDOWS  1
 #define PLATFORM_MAC      2
@@ -26,7 +25,6 @@
 #endif
 
 #include "Server.h"
-#include "utils/Mutex.h"
 #include "network/protocol/Packets.h"
 #include "network/utils/InternetAddress.h"
 #include "network/utils/SocketException.h"
@@ -40,6 +38,8 @@ private:
 	Server* server = nullptr;
 	std::unique_ptr<SessionManager> sessionManager = nullptr;
 	
+	std::future<void> handleSessions;
+	
 	uint16_t port;
 	int socket = -1;
 	
@@ -49,9 +49,7 @@ public:
 	Socket(Server* server, uint16_t port = 19132);
 	~Socket();
 	
-	/** @return Server* */
 	Server* getServer() const;
-	/** @return SessionManager* */
 	SessionManager* getSessionManager() const;
 	
 	inline uint64_t getTime() const {
@@ -59,7 +57,7 @@ public:
 	}
 	
 	/**
-	 * creating a socket for further listening
+	 * Creating a socket for further listening
 	 */
 	void create();
 	

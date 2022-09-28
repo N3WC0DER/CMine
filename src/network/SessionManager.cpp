@@ -42,7 +42,12 @@ Session* SessionManager::getSession(const int64_t GUID) {
 }
 
 void SessionManager::closeSession(const Session* session) {
-	this->closeSession(session->getAddress());
+	auto i = std::find_if(this->sessions.begin(), this->sessions.end(), [session] (const auto& value) {
+		if (value.get() == session) return true;
+		return false;
+	});
+	if (i == this->sessions.end()) throw SocketException() << "Session {" << session->getAddress()->toString() << "} not closed: IP address not found";
+	this->sessions.erase(i);
 }
 
 void SessionManager::closeSession(const InternetAddress* addr) {

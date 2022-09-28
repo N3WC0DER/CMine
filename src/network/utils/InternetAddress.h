@@ -22,6 +22,7 @@ public:
 	std::string getAddress() const;
 	uint16_t getPort() const;
 	IPVersions getVersion() const;
+	
 	/** 
 	 * {IP}:{Port}
 	 */

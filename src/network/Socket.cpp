@@ -20,6 +20,7 @@ SessionManager* Socket::getSessionManager() const {
 }
 
 void Socket::create() {
+	// Socket creation
 	this->socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (this->socket <= 0) {
 		throw SocketException("Socket not created!\nPlease restart server.");
@@ -33,7 +34,8 @@ void Socket::create() {
 		throw SocketException("[Windows] Error socket create\nPlease restart server.");
 	}
 #endif
-
+	
+	// Binding a socket to an IP address
 	sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
@@ -44,6 +46,7 @@ void Socket::create() {
 	}
 	Logger::getInstance()->debug("Socket binded!");
 	
+	// Unlock socket
 #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
 	int nonBlocking = 1;
 	if (fcntl(this->socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
@@ -58,6 +61,9 @@ void Socket::create() {
 #endif
 	
 	this->sessionManager = std::make_unique<SessionManager>(this);
+	
+	// Session update
+	this->handleSessions = ThreadManager::getInstance()->addTask(&SessionManager::updateSessions, this->getSessionManager());
 }
 
 void Socket::receive() {
@@ -74,7 +80,7 @@ void Socket::receive() {
 	
 			int recvBytes = ::recvfrom(this->socket, (char*)packetData, sizeof(packetData), 0, (sockaddr*)&from, &fromLength);
 			
-			if (recvBytes >= 0) {
+			if (recvBytes > 0) {
 				auto buffer = std::make_unique<PacketSerializer>(packetData, recvBytes);
 				
 				// Sender
@@ -92,10 +98,10 @@ void Socket::receive() {
 					// Preparing a packet for shipment
 					auto packet = std::make_unique<UnconnectedPong>();
 					packet->pingTime = ping->pingTime;
-					packet->serverGUID = this->getServer()->getGUID();
+					packet->serverGUID = this->server->getGUID();
 					
 					std::stringstream serverID;
-					serverID << "MCPE;" << "CMine++ Server;" << "390;" << "1.1.5;" << "0;" << "100;" << this->getServer()->getGUID() << ";"
+					serverID << "MCPE;" << "CMine++ Server;" << "390;" << "1.9.30;" << "0;" << "100;" << this->getServer()->getGUID() << ";"
 									 << "CMine++ Server;" << "Survival;" << "1;" << "19132;" << "19133;";
 					packet->serverID = serverID.str();
 					serverID.clear();
@@ -193,7 +199,9 @@ void Socket::send(const uint8_t* buffer, const int packetSize, const InternetAdd
 }
 
 void Socket::close() {
+	this->handleSessions.get();
 	this->sessionManager.reset();
+	
 	if (socket != -1) {
 #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
 		//close(socket);

@@ -119,11 +119,11 @@ void Session::receivePacket(PacketSerializer* buffer) {
 			if (this->layer->recvOrderedPackets[i].empty())
 					continue;
 			
-			// Эти пакеты были добавлены в очередь, но обработались в будущем через основную дейтаграмму
+			// These packets were added to the queue, but processed in the future via the main datagram
 			while (minOrderedIndex(i) < this->layer->recvOrderedIndex[i])
 					this->layer->recvOrderedPackets[i].erase(minOrderedIndex(i));
 			
-			// Добавляем пакеты в дейтаграмму, пока не дойдем до очередного пропуска
+			// We add packets to the datagram until we reach the next gap
 			while (minOrderedIndex(i) == this->layer->recvOrderedIndex[i]) {
 				datagram->packets.push_back(std::move(this->layer->recvOrderedPackets[i][this->layer->recvOrderedIndex[i]]));
 				this->layer->recvOrderedIndex[i]++;
@@ -208,23 +208,3 @@ void Session::handleRawPacket(Datagram* datagram) {
 void Session::sendPacket(const PacketSerializer* packet) {
 	this->socket->send(packet->getBuffer(), packet->getSize(), this->addr.get());
 }
-
-/*void Session::addPacketToQueue(PacketSerializer* buffer, uint8_t reliability, uint8_t orderChannel, QueuePriority priority) {
-	EncapsulatedPacket packet;
-	packet->reliability = reliability;
-	packet->orderChannel = orderChannel;
-	
-	if (priority == QueuePriority::IMMEDIATE) {
-		
-	} else if (priority == QueuePriority::UPDATE) {
-		this->updateQueue.push(packet);
-	} else if (priority == QueuePriority::FULLQ) {
-		this->normalQueue.push(packet);
-		if (this->normalQueue.size() > this->MTU) {
-			for (PacketSerializer* pck : this->normalQueue) {
-				this->sendPacket(pck);
-				this->recoveryQueue[]
-			}
-		}
-	}
-}*/

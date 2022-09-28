@@ -24,7 +24,6 @@ private:
 	std::unique_ptr<Socket> socket = nullptr;
 	
 	std::future<void> recvSocket;
-	std::future<void> handleSessions;
 	
 	uint64_t serverGUID;
 	
@@ -38,12 +37,8 @@ public:
 	
 	Logger* getLogger() const;
 	uint64_t getGUID() const;
-	
-	/** Состояние сервера */
 	Server::State getState() const;
 	bool isShutdown() const;
 	
-	
-	/** Выключение сервера */
 	void shutdown();
 };

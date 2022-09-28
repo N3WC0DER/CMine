@@ -12,8 +12,8 @@ class Session; // cyclic dependency
 
 class SessionManager {
 private:
-	constexpr uint16_t MIN_MTU_SIZE = 576;
-	constexpr uint16_t MAX_MTU_SIZE = 1500;
+	static constexpr uint16_t MIN_MTU_SIZE = 576;
+	static constexpr uint16_t MAX_MTU_SIZE = 1500;
 	Socket* socket = nullptr;
 	
 	mutable std::mutex mutex;

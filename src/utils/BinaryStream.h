@@ -9,10 +9,10 @@ enum class Endian {
 class BinaryStream {
 protected:
 	uint8_t* buffer = nullptr;
-	int size;
-	int capacity;
-	static constexpr int BLOCK = 4;
-	mutable int position;
+	size_t size = 0;
+	size_t capacity = 0;
+	static constexpr uint8_t BLOCK = 4;
+	mutable size_t position = 0;
 	Endian endian = Endian::BENDIAN;
 	
 public:
