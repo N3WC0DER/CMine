@@ -1,2 +1,1 @@
-# CMine
-Server for Minecraft: PE
+# MOVED TO [CMine](https://github.com/CMine-dev)
