@@ -3,9 +3,9 @@
 #include <map>
 #include <unordered_map>
 #include <functional>
+#include <utility>
 
-#include "network/Session.h"
-#include "network/protocol/PacketSerializer.h"
+#include <network/protocol/PacketSerializer.h>
 #include "network/protocol/Acknowledge.h"
 #include "network/protocol/Datagram.h"
 #include "network/protocol/EncapsulatedPacket.h"
@@ -18,14 +18,14 @@ class Session;
 enum class QueuePriority {
 	IMMEDIATE,
 	UPDATE,
-	FULLQ
+	FULLQ,
 };
 
 class ReliabilityLayer {
 private:
 	static const uint8_t MAX_ORDER_CHANNELS = 32;
 	static const uint8_t MAX_SPLIT_PART_COUNT = 128;
-	static const uint8_t MAX_SPLIT_PACKETS = 4;
+	static const uint8_t MAX_SPLIT_PACKETS = 8;
 	
 	uint16_t sessionMTU;
 	
@@ -34,8 +34,8 @@ private:
 	Acknowledge<ID::ACK> ACKQueue;
 	Acknowledge<ID::NACK> NACKQueue;
 	
-	uint32_t lastRecvSequenceNumber;
-	uint32_t recvSequenceNumber;
+	uint32_t lastRecvSequenceNumber = 0;
+	uint32_t recvSequenceNumber = 0;
 	
 	std::vector<uint32_t> recvReliableIndex;
 	
@@ -59,7 +59,7 @@ private:
 	std::unordered_map<uint32_t, std::unique_ptr<PacketSerializer>> recoveryQueue;
 	
 public:
-	ReliabilityLayer(std::function<void(const PacketSerializer*)> sendPacket);
+	explicit ReliabilityLayer(std::function<void(const PacketSerializer*)> sendPacket);
 	
 	size_t handleDatagram(Datagram* datagram);
 	void handleEncapsulated(Datagram* datagram);

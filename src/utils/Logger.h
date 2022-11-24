@@ -4,6 +4,8 @@
 #include <ctime>
 #include <fstream>
 #include <mutex>
+#include <memory>
+#include <iomanip>
 
 #include "ServerInfo.h"
 #include "utils/LogMessage.h"

@@ -1,6 +1,8 @@
-build/CMakeCache.txt
-build/CMakeFiles/*
-build/Makefile
-build/cmake_install.cmake
-build/cmine.out
-server.log
+/cmake/debug/*
+/cmake/docs/*
+/cmake/release/*
+/doc/html/*
+/doc/latex/*
+/doc/Doxyfile
+/.idea/*
+/server.log

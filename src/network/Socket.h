@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <sstream>
+#include <fcntl.h>
 
 #define PLATFORM_WINDOWS  1
 #define PLATFORM_MAC      2
@@ -17,10 +18,11 @@
 #if PLATFORM == PLATFORM_WINDOWS
 	#include <winsock2.h>
 	#pragma comment(lib, "wsock32.lib")
+	#pragma comment(lib, "ws2_32.lib")
 #elif PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
+	typedef SOCKET unsigned long long;
 	#include <sys/socket.h>
 	#include <netinet/in.h>
-	#include <fcntl.h>
 	#include <arpa/inet.h>
 #endif
 
@@ -41,7 +43,7 @@ private:
 	std::future<void> handleSessions;
 	
 	uint16_t port;
-	int socket = -1;
+	SOCKET socket = -1;
 	
 	uint64_t startTime;
 	

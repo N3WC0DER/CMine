@@ -4,6 +4,7 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <functional>
 
 #include "utils/Logger.h"
 #include "utils/Exception.h"

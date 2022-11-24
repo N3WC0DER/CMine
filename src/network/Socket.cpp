@@ -1,10 +1,8 @@
 #include "Socket.h"
 
-#include <iostream>
-
 Socket::Socket(Server* server, uint16_t port)
 		: server(server), port(port) {
-	this->startTime = time(0);
+	this->startTime = time(nullptr);
 }
 
 Socket::~Socket() {
@@ -20,28 +18,41 @@ SessionManager* Socket::getSessionManager() const {
 }
 
 void Socket::create() {
-	// Socket creation
-	this->socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (this->socket <= 0) {
-		throw SocketException("Socket not created!\nPlease restart server.");
-	}
-	Logger::getInstance()->debug("Socket created!");
-	
 #if PLATFORM == PLATFORM_WINDOWS
 	WSADATA WsaData;
-	
+
 	if (WSAStartup(MAKEWORD(2,2), &WsaData) != NO_ERROR) {
+		Logger::getInstance()->error(LogMessage() << WSAGetLastError());
 		throw SocketException("[Windows] Error socket create\nPlease restart server.");
 	}
 #endif
+
+	// Socket creation
+	this->socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (this->socket == INVALID_SOCKET) {
+#if PLATFORM == PLATFORM_WINDOWS
+		Logger::getInstance()->error(LogMessage() << WSAGetLastError());
+		closesocket(this->socket);
+		WSACleanup();
+#endif
+		throw SocketException("Socket not created!\nPlease restart server.");
+	}
+
+
+	Logger::getInstance()->debug("Socket created!");
 	
 	// Binding a socket to an IP address
-	sockaddr_in address;
+	sockaddr_in address{};
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons((unsigned short) this->port);
 	
 	if (::bind(this->socket, (const sockaddr*) &address, sizeof(sockaddr_in)) < 0) {
+#if PLATFORM == PLATFORM_WINDOWS
+		Logger::getInstance()->error(LogMessage() << WSAGetLastError());
+		closesocket(this->socket);
+		WSACleanup();
+#endif
 		throw SocketException("Error socket bind\nPlease restart server.");
 	}
 	Logger::getInstance()->debug("Socket binded!");

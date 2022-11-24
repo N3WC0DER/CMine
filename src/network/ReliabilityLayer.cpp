@@ -1,7 +1,7 @@
 #include "ReliabilityLayer.h"
 
 ReliabilityLayer::ReliabilityLayer(std::function<void(const PacketSerializer*)> sendPacket) 
-		: sendPacket(sendPacket) {}
+		: sendPacket(std::move(sendPacket)) {}
 
 size_t ReliabilityLayer::handleDatagram(Datagram* datagram) {
 	this->ACKQueue.sequenceNumbers.push_back(datagram->sequenceNumber);
@@ -98,14 +98,14 @@ bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
 	
 	uint32_t totalParts = packet->splitInfo.compoundSize;
 	uint32_t partIndex = packet->splitInfo.compoundIndex;
-	uint16_t splitID = packet->splitInfo.compoundID;
+	uint16_t splitId = packet->splitInfo.compoundID;
 	
 	if (totalParts >= MAX_SPLIT_PART_COUNT || partIndex >= totalParts) {
 		Logger::getInstance()->warning(LogMessage() << "Invalid split packet part (total parts " << totalParts << ", part index " << partIndex << ")");
 		return false;
 	}
 	
-	if (this->splitPackets[splitID].empty()) {
+	if (this->splitPackets[splitId].empty()) {
 		if (this->splitPackets.size() > MAX_SPLIT_PACKETS) {
 			Logger::getInstance()->warning(LogMessage() << "Ignored split packet part because reached concurrent split packet limit of " << MAX_SPLIT_PACKETS);
 			return false;
@@ -115,28 +115,28 @@ bool ReliabilityLayer::handleSplit(EncapsulatedPacket* packet) {
 	auto temp = std::make_unique<EncapsulatedPacket>();
 	temp->buffer = packet->buffer;
 	temp->length = packet->length;
-	this->splitPackets[splitID][partIndex] = std::move(temp);
+	this->splitPackets[splitId][partIndex] = std::move(temp);
 	
-	if (this->splitPackets[splitID].size() != totalParts) {
+	if (this->splitPackets[splitId].size() != totalParts) {
 		return false;
 	}
 	
 	int totalLength = 0;
 	std::vector<std::unique_ptr<EncapsulatedPacket>> parts;
-	for (size_t i = 0; i < this->splitPackets[splitID].size(); i++) {
-		totalLength += this->splitPackets[splitID][i]->length;
-		parts[i] = std::move(this->splitPackets[splitID][i]);
+	for (size_t i = 0; i < this->splitPackets[splitId].size(); i++) {
+		totalLength += this->splitPackets[splitId][i]->length;
+		parts[i] = std::move(this->splitPackets[splitId][i]);
 	}
 	
 	packet->length = totalLength;
 	packet->hasSplit = false;
 	
-	for (auto part = parts.begin(); part != parts.end(); part++) {
-		packet->buffer.put((*part)->buffer.read((*part)->length), (*part)->length);
-		(*part).reset();
+	for (auto& part : parts) {
+		packet->buffer.put(part->buffer.read(part->length), part->length);
+		part.reset();
 	}
 	
-	this->splitPackets[splitID].clear();
+	this->splitPackets[splitId].clear();
 	
 	return true;
 }
@@ -167,7 +167,7 @@ void ReliabilityLayer::sendEncapsulated(PacketSerializer* buffer, Reliability re
 	//IP header size (20 bytes) + UDP header size (8 bytes) + RakNet weird (8 bytes) + datagram header size (4 bytes) + max encapsulated packet header size (20 bytes)
 	size_t maxSize = this->sessionMTU - 60;
 	if (packet->length > maxSize) {
-		uint16_t splitID = this->splitID++ % 0xF0000;
+		uint16_t splitId = this->splitID++ % 0xF0000;
 		uint32_t partIndex = 0;
 		std::unique_ptr<PacketSerializer> temp = nullptr;
 		for (size_t i = packet->length; i > 0; i -= maxSize) {
@@ -204,8 +204,8 @@ void ReliabilityLayer::sendEncapsulated(PacketSerializer* buffer, Reliability re
 			this->updateQueue.push_back(std::move(packet));
 		} else if (priority == QueuePriority::FULLQ) {
 			size_t length = packet->getLength();
-			for (auto pck = this->normalQueue.begin(); pck != this->normalQueue.end(); pck++) {
-				length += (*pck)->getLength();
+			for (auto & pck : this->normalQueue) {
+				length += pck->getLength();
 			}
 			
 			if (length >= this->sessionMTU - 40) {
